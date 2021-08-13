@@ -1,0 +1,89 @@
+---
+title: NRI 7350
+---
+
+<!-- Notes for next time: -->
+<!-- - Consider mandatory reading of R for Data Science -->
+
+#### Study design and quantitative methods for resource and environmental management
+
+#
+
+# Welcome!
+
+I'm excited for the opportunity to share my love of R with you during these R labs. 
+This site should give you all the details you need to get you ready to start and participate in the labs.
+
+> First thing you should do is check out the Pre-class **[Prep page](prep.html)**
+
+In lecture you will be learning the 'why' of statistics and experimental design.
+In these labs we will be concentrating on the 'how'. We will be using R in the
+RStudio user-interface and will cover R basics, RStudio, and the various steps
+required to explore, analyze, and visualize your data.
+
+### Extra Resources 
+
+The **real** power of R is not in statistics, but in
+cleaning, summarizing and transforming data. We will cover as much of this as we
+can, but the following text is a very accessible one for getting started with
+data manipulation in R
+
+_R for Data Science_  
+Garrett Grolemund and Hadley Wickham, 2016  
+Open-source text available online at: http://r4ds.had.co.nz/
+
+### Learning Outcomes
+
+By the end of these labs you will be able to:
+
+- Install and use various R packages
+- Work with RStudio projects
+- Load your data into R
+- Apply basic data manipulations in R
+- Conduct data exploration and analysis in R
+- Evaluate your models in R
+
+### Outline
+Here is the lab outline (exact topics subject to change):
+
+#### Pre-class
+ - Installing R and RStudio
+ - Installing packages
+
+#### Lab 1 - Intro to R (Week 2 - Sept 15)
+ - How to use RStudio
+ - Review R basics
+ 
+#### Lab 2 - Loading data and making figures (Week 3 - Sept 22)
+ - Loading data
+ - Figures with `ggplot2`
+
+#### Lab 3 - Data Exploration (Week 4 - Sept 29)
+ - Exploratory statistics
+ - Summary statistics
+ - Graphical data exploration
+
+#### Lab 4 - Regressions and ANOVAs (Week 5 - Oct 6)
+ - Running regressions and ANOVAs in R
+ - Plotting models
+ - Model diagnostics
+
+#### Lab 5 - Models cont'd and Interactions (Week 6 - Oct 13)
+ - Interactions in linear regressions
+ 
+#### Lab 6 - GLMs and Non-parametric stats (Week 7 - Oct 20)
+ - General linear models (GLMs)
+ - Non-parametric statistics
+
+#### Independent Projects - (Weeks 9-12 Nov 4 - Dec 2)
+ - Scheduled meetings with individuals or small groups
+
+__See you in lab!__
+
+
+---
+
+```{r, echo = FALSE, results = "asis"}
+paste0("Updated ", format(Sys.time(), usetz = TRUE))
+```
+

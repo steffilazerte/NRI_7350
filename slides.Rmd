@@ -1,0 +1,75 @@
+---
+title: "Slides and Data"
+---
+
+Throughout this course we will have in-class mini-assignments embedded in the slides.
+
+Answers to the mini-assignments will be available after the Lab :)
+
+## Slides
+
+```{r, include = FALSE}
+after_date <- c(0)
+
+library(tidyverse)
+library(glue)
+```
+
+```{r getdata, include = FALSE}
+# MOVE SLIDES
+f <- "slides"
+if(dir.exists(dirname(f)) && !dir.exists(f)) dir.create(f)
+
+# MOVE BEFORE
+before <- list.files(path = "_labs/Handouts", full.names = TRUE) %>%
+  str_subset("answers", negate = TRUE)
+file.copy(before, f, overwrite = TRUE)
+
+# MOVE AFTER
+if(length(after_date) > 0){
+  after <- list.files(path = "_labs/Handouts", pattern = ".pdf", full.names = TRUE) %>%
+    str_subset("answers") %>%
+    str_subset(glue_collapse(glue("_labs/Handouts/{after_date} "), sep = "|"))
+  file.copy(after, f, overwrite = TRUE)
+}
+
+slides <- tibble(file = list.files("./slides", full.names = TRUE),
+                 name = basename(file)) %>%
+  mutate(name = str_remove_all(name, ".pdf|-print| - answers"),
+         name = str_remove(name, "[^-]* - [0-9]{1,2} "),
+         name = str_remove(name, "^[0-9]{1} "),
+         type = if_else(str_detect(file, "print"), "print", "normal"),
+         answers = if_else(str_detect(file, "answers"), "answers", "normal")) %>%
+  arrange(file) %>%
+  mutate(n = as.numeric(factor(name, levels = unique(name))))
+
+
+text <- slides %>%
+  complete(type = c("normal", "print"), answers = c("normal", "answers"), nesting(name)) %>%
+  mutate(file = replace_na(file, ""),
+         type = case_when(type == "normal" & answers == "normal" ~ "regular",
+                          type == "normal" ~ "answers",
+                          type == "print" & answers == "normal" ~ "print",
+                          type == "print" ~ "answers print"),
+         type = factor(type, levels = c("regular", "print", "answers", "answers print")),
+         title = glue("{n}. {name} \n"),
+         nolinks = case_when(file != "" ~ glue("({type})"),
+                             TRUE ~ glue("({type})")),
+         links = case_when(file != "" ~ glue("([{type}]({file}))"),
+                           TRUE ~ glue("({type})"))) %>%
+  arrange(name, type) %>%
+  group_by(name) %>%
+  summarize(links = glue_collapse(links, sep = "|"),
+            nolinks = glue_collapse(nolinks, sep = "|"),
+            title_nolinks = glue("{title[1]}{nolinks}"),
+            title = glue("{title[1]} {links}"), .groups = "drop") %>%
+  arrange(title)
+```
+
+
+```{r, echo = FALSE, message = FALSE, results = "asis"}
+
+for(n in seq_along(text$title_nolinks)) cat(text$title_nolinks[n], "\n\n", sep = "")
+#for(n in seq_along(text$title)) cat(text$title[n], "\n\n", sep = "")
+```
+

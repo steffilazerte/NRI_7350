@@ -1,0 +1,17 @@
+name: "NRI 7350 - Study design and quantitative methods for resource and environmental management"
+navbar:
+  title: "NRI 7350 - R Labs - Fall 2021"
+  left:
+    - text: "Outline"
+      href: index.html
+    - text: "Prep"
+      href: prep.html
+    - text: "Slides"
+      href: slides.html
+    - text: "Contact"
+      href: contact.html
+output:
+  html_document:
+    theme: journal
+    css: styles.css
+output_dir: "docs"
