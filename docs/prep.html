@@ -325,7 +325,7 @@ If you have any problems installing the software or packages, <a href="contact.h
 </ul>
 <p>Open RStudio <img src="figures/RStudio-Ball.png" alt="RStudio Logo" style="height: 30px;"/> <strong>not R</strong> <img src="figures/R.png" alt="R Logo" style="height: 30px;"/>. RStudio automatically opens R for you in the ‘Console’ pane</p>
 <p><strong>Verify that your version of R by looking at the first line of the console (left or lower left pane), you should see something like this:</strong></p>
-<pre><code>## R version 4.1.0 (2021-05-18) -- Camp Pontanezen
+<pre><code>## R version 4.1.1 (2021-08-10) -- Kick Things
 ## Copyright (C) 2021 The R Foundation for Statistical Computing
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## 
@@ -342,7 +342,7 @@ If you have any problems installing the software or packages, <a href="contact.h
 ## Type &#39;demo()&#39; for some demos, &#39;help()&#39; for on-line help, or
 ## &#39;help.start()&#39; for an HTML browser interface to help.
 ## Type &#39;q()&#39; to quit R.</code></pre>
-<p>The important line is the first one: R version 4.1.0 (2021-05-18) – Camp Pontanezen</p>
+<p>The important line is the first one: R version 4.1.1 (2021-08-10) – Kick Things</p>
 </div>
 <div id="tidyverse" class="section level2">
 <h2>4a) Install <code>tidyverse</code> package</h2>
@@ -367,6 +367,17 @@ The downloaded source packages are in
 <li>Test that your installation had no problems by typing <code>library("tidyverse")</code> into the console and hitting enter. You should see something like this (<strong>Note:</strong> These are messages, not errors!):</li>
 </ul>
 <pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+## ✓ tibble  3.1.3     ✓ dplyr   1.0.7
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   2.0.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::collapse()  masks glue::collapse()
+## x tidyr::extract()   masks magrittr::extract()
+## x dplyr::filter()    masks stats::filter()
+## x dplyr::lag()       masks stats::lag()
+## x purrr::set_names() masks magrittr::set_names()</code></pre>
 <blockquote>
 <h2 id="problems">Problems?</h2>
 <ul>
