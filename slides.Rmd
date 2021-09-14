@@ -10,20 +10,45 @@ Answers to the mini-assignments will be available after the Lab :)
 
 ```{r, include = FALSE}
 after_date <- c(0)
+f <- "slides"
+
 
 library(tidyverse)
 library(glue)
+library(magrittr)
+
+file.copy(c("_labs/pres_styles.css", 
+            "_labs/global_styles.css",
+            "_labs/macros.js",
+            "_labs/figures"), f, recursive = TRUE)
+
+labs <- tribble(
+  ~f,                         ~nice,                                 ~answers,
+  "1_intro_to_R.Rmd",         "1 Introduction to R",                 TRUE,
+  "2_loading_and_figs.Rmd",   "2 Loading Data and Creating Figures", TRUE,
+  "3_data_exploration.Rmd",   "3 Data Exploration",                  TRUE,
+  "4_regression_anova.Rmd",   "4 Regressions and ANOVAs",            TRUE,
+  "5_advanced_models.Rmd",    "5 Interactions and Post-Hoc tests",   TRUE,
+  "6_glm_non_parametric.Rmd", "6 GLMs and Non-parametric stats",     TRUE) %>%
+  mutate(f = file.path("./_labs", f),
+         nice = file.path(nice))
 ```
 
 ```{r getdata, include = FALSE}
 # MOVE SLIDES
-f <- "slides"
+
 if(dir.exists(dirname(f)) && !dir.exists(f)) dir.create(f)
 
-# MOVE BEFORE
+# MOVE BEFORE PDF
 before <- list.files(path = "_labs/Handouts", full.names = TRUE) %>%
-  str_subset("answers", negate = TRUE)
-file.copy(before, f, overwrite = TRUE)
+  str_subset("answers", negate = TRUE) %T>%
+  file.copy(f, overwrite = TRUE)
+
+# MOVE BEFORE HTML
+list.files(path = "_labs",  full.names = TRUE,
+           pattern = str_remove_all(before, "_labs/Handouts/|.pdf")) %>%
+  str_subset("pdf|answers", negate = TRUE) %>%
+  file.copy(f, overwrite = TRUE, recursive = TRUE)
 
 # MOVE AFTER
 if(length(after_date) > 0){
@@ -35,24 +60,20 @@ if(length(after_date) > 0){
 
 slides <- tibble(file = list.files("./slides", full.names = TRUE),
                  name = basename(file)) %>%
-  mutate(name = str_remove_all(name, ".pdf|-print| - answers"),
-         name = str_remove(name, "[^-]* - [0-9]{1,2} "),
-         name = str_remove(name, "^[0-9]{1} "),
-         type = if_else(str_detect(file, "print"), "print", "normal"),
+  filter(!str_detect(file, "_files|.css|.js|figures")) %>%
+  mutate(name = str_remove_all(name, ".html|.pdf|-print| - answers"),
+         type = str_extract(file, "pdf|html"),
          answers = if_else(str_detect(file, "answers"), "answers", "normal")) %>%
-  arrange(file) %>%
-  mutate(n = as.numeric(factor(name, levels = unique(name))))
+  arrange(file)
 
 
 text <- slides %>%
-  complete(type = c("normal", "print"), answers = c("normal", "answers"), nesting(name)) %>%
+  complete(type = c("html", "pdf"), answers = c("normal", "answers"), 
+           nesting(name = labs$nice)) %>%
   mutate(file = replace_na(file, ""),
-         type = case_when(type == "normal" & answers == "normal" ~ "regular",
-                          type == "normal" ~ "answers",
-                          type == "print" & answers == "normal" ~ "print",
-                          type == "print" ~ "answers print"),
-         type = factor(type, levels = c("regular", "print", "answers", "answers print")),
-         title = glue("{n}. {name} \n"),
+         title = glue("**{str_replace(name, '^([0-9]{1})', '\\\\1.')}**"),
+         answers = if_else(answers == "normal", "", " - answers"),
+         type = glue("{type}{answers}"),
          nolinks = case_when(file != "" ~ glue("({type})"),
                              TRUE ~ glue("({type})")),
          links = case_when(file != "" ~ glue("([{type}]({file}))"),
@@ -69,7 +90,7 @@ text <- slides %>%
 
 ```{r, echo = FALSE, message = FALSE, results = "asis"}
 
-for(n in seq_along(text$title_nolinks)) cat(text$title_nolinks[n], "\n\n", sep = "")
-#for(n in seq_along(text$title)) cat(text$title[n], "\n\n", sep = "")
+#for(n in seq_along(text$title_nolinks)) cat(text$title_nolinks[n], "\n\n", sep = "")
+for(n in seq_along(text$title)) cat(text$title[n], "\n\n", sep = "")
 ```
 

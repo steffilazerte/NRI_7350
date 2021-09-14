@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>NRI 7350 - Lab 1</title>
+    <meta charset="utf-8" />
+    <script src="1 Introduction to R_files/header-attrs-2.9/header-attrs.js"></script>
+    <link rel="stylesheet" href="pres_styles.css" type="text/css" />
+    <link rel="stylesheet" href="global_styles.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: title-slide, nobar
+
+## NRI 7350
+# Getting started with R
+
+![:img center, bottom: 25px, 53%, ,](figures/happy_r.png)
+
+.footnote[[@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+
+
+
+---
+# Check-in
+
+- Everyone getting emails?
+    - Email about these slides?
+- Everyone have access to these slides?  
+  https://steffilazerte.ca/NRI_7350/slides.html
+
+---
+# About these Labs
+
+## Format
+- I will provide you tools and workflow to get started with R
+- I will go over specific statistical functions
+    - How to run them
+    - How to interpret the results
+- We'll have hands-on, lecture, and demonstrations
+
+.spacer[]
+
+## R is hard: But have no fear!
+- Don't expect to remember everything!
+- Copy/Paste is your friend (never apologize for using it!)
+- Consider these labs a resource to return to
+
+---
+# About these Labs
+
+## Format
+- I will provide you tools and workflow to get started with R
+- I will go over specific statistical functions
+    - How to run them
+    - How to interpret the results
+- We'll have hands-on, lecture, and demonstrations
+
+
+.spacer[]
+
+## R is hard: But have no fear!
+- **Don't expect to remember everything!**
+- Copy/Paste is your friend (never apologize for using it!)
+- Consider these labs a resource to return to
+
+---
+background-image: url(figures/impostR_en.png)
+background-position: center center
+background-size: 70%
+
+# Impost**R** Syndrome
+
+---
+background-image: url(figures/impostR_en.png)
+background-position: right 75px top 25%
+background-size: 30%
+
+# Impost**R** Syndrome
+
+![:img left: 25px, bottom: 175px, 60%, , David Whittaker](figures/imposter.jpg)
+
+--
+
+![:box 50%, 80%, 75%](&lt;strong&gt;Moral of the story?&lt;/strong&gt;&lt;br&gt;Make friends, code in groups, learn together and don't beat yourself up)
+
+
+---
+class: nobar
+![:img center, bottom: 0, 53%, ,](https://github.com/allisonhorst/stats-illustrations/raw/master/rstats-artwork/r_first_then.png)
+
+
+.footnote[[@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+
+
+
+---
+class: section
+
+# About R
+
+---
+layout: true
+# Why R?
+
+---
+background-image: url(figures/R_hard.png)
+background-position: right 15% bottom 10%
+background-size: 70%
+
+## R is hard
+
+---
+background-image: url(figures/R_powerful2_edit.png)
+background-position: center bottom 40%
+background-size: 70%
+
+## But R is powerful (and reproducible)!
+
+--
+
+.footnote[(I made these slides with **R**markdown)]
+
+---
+background-image: url(figures/spatial.png)
+background-position: center bottom 10%
+background-size: 40%
+
+## R is also beautiful
+
+---
+background-image: url(figures/R_free.png)
+background-position: center bottom 40%
+background-size: 70%
+
+## R is affordable (i.e., free!)
+
+
+---
+layout: false
+class: section
+
+# What is R?
+
+---
+# R is Programming language
+
+&gt; A programming **language** is a way to give instructions in order to get a computer to do something
+
+- You need to know the language (i.e., the code)
+- Computers don't know what you mean, only what you type (unfortunately)
+- Spelling, punctuation, and capitalization all matter!
+
+## For example
+
+**R, what is 56 times 5.8?**
+
+
+```r
+56 * 5.8
+```
+
+```
+## [1] 324.8
+```
+
+---
+# Use code to tell R what to do
+
+**R, what is the average of numbers 1, 2, 3, 4?**
+
+
+```r
+mean(c(1, 2, 3, 4))
+```
+
+```
+## [1] 2.5
+```
+
+--
+
+**R, save this value for later**
+
+
+```r
+steffis_mean &lt;- mean(c(1, 2, 3, 4))
+```
+
+--
+
+**R, multiply this value by 6**
+
+
+```r
+steffis_mean * 6
+```
+
+```
+## [1] 15
+```
+
+---
+class: split-50
+# Code, Output, Scripts
+
+.columnl[
+## Code
+- The actual commands
+
+## Output
+- The result of running code or a script
+
+## Script
+- A text file full of code that you want to run
+- You should always keep your code in a script
+]
+
+
+--
+
+.columnr[
+
+## For example:
+
+
+```r
+mean(c(1, 2, 3, 4))
+```
+
+```
+## [1] 2.5
+```
+]
+
+
+![:here right: 100px, top: 200px](&lt;strong&gt;Code&lt;/strong&gt;)
+![:here right: 100px, top: 250px](&lt;strong&gt;Output&lt;/strong&gt;)
+
+![:here right: 100px, top: 310px](&lt;strong&gt;Script&lt;/strong&gt;)
+
+![:img right: 200px, bottom: 5px, 30%, ,](figures/script.png)
+
+
+
+
+
+---
+# RStudio vs. R
+
+![:img left: 15%, top: 125px, 300px, , RStudio](figures/RStudio-Ball.png)
+![:img right: 15%, top: 125px, 400px, , R](figures/R.png)
+
+
+
+![:spacer 175px]()
+
+- **RStudio** is not **R**
+- RStudio is a User Interface or IDE (integrated development environment)
+    - (i.e., Makes coding simpler)
+- But sometimes tries to be **too** helpful
+
+---
+# RStudio Features
+
+### Changing Options: Tools &gt; Global Options
+
+- General &gt; Restore RData into workspace at startup (NO!)
+- General &gt; Save workspace to on exit (NEVER!)
+- Code &gt; Insert matching parens/quotes (Personal preference)
+
+## Projects
+- Handles working directories
+- Organizes your work
+
+## Packages
+- Can use the package manager to install packages
+- Can use the manager to load them as well, but not recommended
+  - Load packages in your script so you remember which ones you used!
+
+
+---
+class: section
+
+# Let's take a look at RStudio
+
+## Set up a Project for this course
+
+
+---
+class: section
+
+# Your first *real* code!
+
+---
+# First Code
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;library(tidyverse)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+.spacer[ ]
+
+- Copy/paste or type this into the script window in RStudio
+  - You may have to go to File &gt; New File &gt; R Script
+- Click anywhere on the first line of code
+- Use the 'Run' button to run this code, **or** use the short-cut `Ctrl-Enter`
+    - Repeat until all the code has run
+
+---
+layout: true
+# First Code
+
+---
+
+
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;library(tidyverse)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-yd4xxb6-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;library(&lt;span style="background-color:#ffff7f"&gt;tidyverse&lt;/span&gt;)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-62ha6l8-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+![:box 50%, 20%, 20%](Package&lt;br&gt;
+&lt;code&gt;tidyverse&lt;/code&gt;)
+
+---
+
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;&lt;span style="background-color:#ffff7f"&gt;library&lt;/span&gt;(tidyverse)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;&lt;span style="background-color:#ffff7f"&gt;ggplot&lt;/span&gt;(data = msleep, &lt;span style="background-color:#ffff7f"&gt;aes&lt;/span&gt;(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;geom_point&lt;/span&gt;()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-m5iq143-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+![:box 25%, 15%, 30%](Functions:&lt;br&gt;
+&lt;code&gt;library(&amp;rpar;&lt;/code&gt;, &lt;code&gt;ggplot(&amp;rpar;&lt;/code&gt;&lt;br&gt;&lt;code&gt;aes(&amp;rpar;&lt;/code&gt;, and &lt;code&gt;geom_point(&amp;rpar;&lt;/code&gt;)
+
+---
+
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;library(tidyverse)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) &lt;span style="background-color:#ffff7f"&gt;+&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-5r03yi2-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+![:box 14.5%, 35%, 25%](&lt;code&gt;+&lt;/code&gt;&lt;br&gt;(Specific to &lt;code&gt;ggplot&lt;/code&gt;&amp;rpar;)
+
+---
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;library(tidyverse)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-r30bowo-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+![:box 22%, 57%, 17%](Figure!)
+
+---
+
+&lt;code class ='r hljs remark-code'&gt;# First load the package&lt;br&gt;library(tidyverse)&lt;br&gt;&lt;br&gt;# Now create the figure&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-cb0noge-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+![:box 23%, 48%, 18%](Warning)
+
+---
+
+
+&lt;code class ='r hljs remark-code'&gt;&lt;span style="background-color:#ffff7f"&gt;# First load the package&lt;/span&gt;&lt;br&gt;library(tidyverse)&lt;br&gt;&lt;br&gt;&lt;span style="background-color:#ffff7f"&gt;# Now create the figure&lt;/span&gt;&lt;br&gt;ggplot(data = msleep, aes(x = sleep_total, y = sleep_rem, colour = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+```
+
+## Warning: Removed 22 rows containing missing values (geom_point).
+
+```
+
+
+&lt;img src="1 Introduction to R_files/figure-html/first_code-flaired-zzs9a4e-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+![:label 67%, 18.5%, 20%](Comments)
+
+---
+layout:false
+class: section
+# R Basics: Objects
+
+Objects are *things* in the environment  
+
+(Check out the **Environment** pane in RStudio)
+
+
+---
+# `functions()`
+
+## Do things, Return things
+
+### Does something but returns nothing
+e.g., `write_csv()` - Saves the `mtcars` data frame as a csv file
+
+
+```r
+write_csv(mtcars, path = "mtcars.csv")
+```
+
+.spacer[ ]
+
+### Does something and returns something
+e.g., `sd()` - returns the standard deviation of a vector 
+
+
+```r
+sd(c(4, 10, 21, 55))
+```
+
+```
+## [1] 22.78157
+```
+
+---
+class: split-50
+# `functions()`
+
+- Functions can take **arguments** (think 'options')
+- `data`, `x`, `y`, `colour`
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(&lt;span style="background-color:#ffff7f"&gt;data&lt;/span&gt; = msleep, aes(&lt;span style="background-color:#ffff7f"&gt;x&lt;/span&gt; = sleep_total, &lt;span style="background-color:#ffff7f"&gt;y&lt;/span&gt; = sleep_rem, &lt;span style="background-color:#ffff7f"&gt;colour&lt;/span&gt; = vore)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point()&lt;/code&gt;
+
+
+--
+
+![:spacer 15px]()
+
+- Arguments defined by **name** or by **position**
+- With correct position, do not need to specify by name
+
+![:spacer 10px]()
+
+
+.columnl[
+### By name:
+
+&lt;code class ='r hljs remark-code'&gt;mean(&lt;span style="background-color:#ffff7f"&gt;x = &lt;/span&gt;c(1, 5, 10))&lt;/code&gt;
+
+```
+
+## [1] 5.333333
+
+```
+]
+
+.columnr[
+### By order:
+
+&lt;code class ='r hljs remark-code'&gt;mean(c(1, 5, 10))&lt;/code&gt;
+
+```
+
+## [1] 5.333333
+
+```
+]
+
+--
+
+![:spacer 70px]()
+&gt; Note that `c()` is also a function: combine or concatenate
+
+---
+class: split-40
+# `functions()`
+
+## Watch out for 'hidden' arguments
+
+.columnl[
+### By name:
+
+```r
+mean(x = c(1, 5, 10, NA), 
+     na.rm = TRUE)
+```
+
+```
+## [1] 5.333333
+```
+]
+
+--
+
+.columnr[
+### By order:
+
+```r
+mean(c(1, 5, 10, NA), 
+     TRUE)
+```
+
+```
+## Error in mean.default(c(1, 5, 10, NA), TRUE): 'trim' must be numeric of length one
+```
+]
+
+--
+![:spacer 130px]()
+
+.center[This error states that we've assigned the argument `trim` to a non-valid argument]
+
+.spacer[ ]
+
+.center[Where did **`trim`** come from?]
+
+---
+# R documentation
+
+
+```r
+?mean
+```
+
+![:spacer 25px]()
+
+.center[**Your Turn:**  
+
+Run this, what happens?  
+
+Do you see the `trim` argument?]
+
+--
+![:img right: 10%, bottom: 5%, 60%, , ](figures/mean_docs.png)
+
+
+---
+class: split-40
+# Data
+
+Generally kept in `vectors` or `data.frames`/`tibbles`
+
+- These are objects with names (like functions)
+- We can use `&lt;-` to assign values to objects (assignment)
+
+![:spacer 10px]()
+
+.columnl[
+## Vector (1 dimension)
+
+
+```r
+a &lt;- c("a", "b", "c")
+a
+```
+
+```
+## [1] "a" "b" "c"
+```
+]
+
+.columnr[
+## Data frame (2 dimensions)
+
+
+```r
+d &lt;- data.frame(letters = c("a", "b", "c"),
+                numbers = c(1, 2, 3),
+                treat = c("control", "control", "control"))
+d
+```
+
+```
+##   letters numbers   treat
+## 1       a       1 control
+## 2       b       2 control
+## 3       c       3 control
+```
+]
+
+![:box 12%, 39%, 200px](rows x columns)
+
+---
+class: space
+# Vectors
+
+### Use `c()` to create a vector
+
+```r
+a &lt;- c("apples", 12, "bananas")
+```
+
+
+### Use `x[index]` to access part of a vector
+
+
+```r
+a[3] # [1] "bananas"
+```
+
+
+### Vectors contain one type of variable
+(Even if you try to make it with more)
+
+```r
+class(a) # [1] "character"
+```
+
+---
+class: split-50
+# Data frames (also tibbles)
+
+.columnl[
+### Create with `data.frame()`/`tibble()`
+
+```r
+my_data &lt;- tibble(x = c("s1", "s2", "s3", "s4"),
+                  y = c(101, 102, 103, 104),
+                  z = c("a", "b", "c", "d"))
+my_data
+```
+
+```
+## # A tibble: 4 × 3
+##   x         y z    
+##   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1 s1      101 a    
+## 2 s2      102 b    
+## 3 s3      103 c    
+## 4 s4      104 d
+```
+
+.small[(`dbl` = "Double" = Computer talk for non-integer number)]
+
+]
+
+--
+
+.columnr[
+### Cols have different types of variables
+
+
+```r
+str(my_data)
+```
+
+```
+## tibble [4 × 3] (S3: tbl_df/tbl/data.frame)
+##  $ x: chr [1:4] "s1" "s2" "s3" "s4"
+##  $ y: num [1:4] 101 102 103 104
+##  $ z: chr [1:4] "a" "b" "c" "d"
+```
+]
+
+
+---
+class: split-50
+# Data frames (also tibbles)
+
+.columnl[
+### `x$colname` to pull out column
+
+
+```r
+my_data$x
+```
+
+```
+## [1] "s1" "s2" "s3" "s4"
+```
+
+### Or use `pull()` .small[(from `tidyverse`)]
+
+```r
+pull(my_data, x)
+```
+
+```
+## [1] "s1" "s2" "s3" "s4"
+```
+]
+
+--
+
+.columnr[
+`x[row, col]` to access rows and columns of a data frame
+
+
+```r
+my_data[1:2, 2:3]
+```
+
+```
+## # A tibble: 2 × 2
+##       y z    
+##   &lt;dbl&gt; &lt;chr&gt;
+## 1   101 a    
+## 2   102 b
+```
+]
+
+
+---
+class: split-40
+# Your Turn: Vectors and Data frames
+
+### 1) Create a vector with 5 numbers and look at it
+  - Find it in the "Global Environment" pane (upper right)
+  - Type its name in the console and hit enter
+  
+
+  
+
+&lt;code class ='r hljs remark-code'&gt;&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt; &lt;- c(&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;, &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;, &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;, &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;, &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;)&lt;br&gt;&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/code&gt;
+
+![:spacer 15px]()
+
+### 2) Create a data frame with `data.frame()` or `tibble()`
+  - Click on it's name in the "Global Environment"
+  - Type its name in the console and hit enter
+
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt; &lt;- &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;(&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt; = c("&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;", "&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;", "&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt; = c(&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;, &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;, &lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&lt;/span&gt;))&lt;br&gt;&lt;span style="background-color:#ffff7f"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/code&gt;
+
+---
+exclude: TRUE
+class: split-40
+# Your Turn: Vectors and Data frames
+
+### 1) Create a vector with 5 numbers and look at it
+  - Find it in the "Global Environment" pane (upper right)
+  - Type its name in the console and hit enter
+  
+
+&lt;code class ='r hljs remark-code'&gt;wings &lt;- c(10, 42, 18, 12, 54)&lt;br&gt;wings&lt;/code&gt;
+
+![:spacer 15px]()
+
+### 2) Create a data frame with `data.frame()` or `tibble()`
+  - Click on its name in the "Global Environment"
+  - Type its name in the console and hit enter
+
+
+&lt;code class ='r hljs remark-code'&gt;sites &lt;- data.frame(site = c("A1", "A2", "A3"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;vals = c(10, 51, 92))&lt;br&gt;sites&lt;/code&gt;
+
+
+---
+class: section
+
+# Miscellaneous
+
+---
+# R has spelling and punctuation
+
+- R cares about spelling
+- R is also case sensitive! (`Apple` is not the same as `apple`)
+- Comma's are used to separate arguments in functions
+
+## For example
+
+This is correct:
+
+```r
+mean(c(5, 7, 10))  # [1] 7.333333
+```
+
+This is **not** correct:
+
+```r
+mean(c(5 7 10))
+```
+
+```
+## Error: &lt;text&gt;:1:10: unexpected numeric constant
+## 1: mean(c(5 7
+##              ^
+```
+
+--
+
+.box-r[\&gt;80% of learning R is learning to **troubleshoot**]
+
+---
+class: space
+# R has spelling and punctuation
+
+### Spaces usually don't matter unless they change meanings
+
+
+```r
+5&gt;=6    # [1] FALSE
+5 &gt;=6   # [1] FALSE
+5 &gt;= 6  # [1] FALSE
+5 &gt; = 6 # Error: unexpected '=' in "5 &gt; ="
+```
+
+### Periods don't matter either, but can be used in the same way as letters
+  .small[(But for complex programming reasons... don't)]
+
+
+```r
+apple.oranges &lt;- "fruit"
+```
+
+---
+class: space
+# Assignments and Equal signs
+
+### Use `&lt;-` to assign values to objects
+
+
+```r
+a &lt;- "hello"
+```
+
+### Use `=` to set function arguments
+
+
+```r
+mean(x = c(4, 9, 10))
+```
+
+### Use `==` to determine equivalence (logical)
+
+
+```r
+10 == 10 # [1] TRUE
+10 == 9  # [1] FALSE
+```
+
+---
+layout:true
+# Braces/Brackets
+
+---
+
+## Round brackets: `()`
+
+- Run functions (even if there are no arguments)
+
+
+```r
+Sys.Date() # Get the Current Date
+```
+
+```
+## [1] "2021-09-14"
+```
+
+--
+
+- Without the `()`, R spits out information on the function:
+
+
+```r
+Sys.Date
+```
+
+```
+## function () 
+## as.Date(as.POSIXlt(Sys.time()))
+## &lt;bytecode: 0x55b48565b858&gt;
+## &lt;environment: namespace:base&gt;
+```
+
+--
+
+.box-br[
+`()` must be associated with a **function**  
+.small[(Well, _almost_ always)]
+]
+
+---
+## Square brackets: `[]`
+
+- Extract parts of objects  
+
+
+```r
+LETTERS
+```
+
+```
+##  [1] "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S"
+## [20] "T" "U" "V" "W" "X" "Y" "Z"
+```
+
+```r
+LETTERS[1]
+```
+
+```
+## [1] "A"
+```
+
+```r
+LETTERS[26]
+```
+
+```
+## [1] "Z"
+```
+
+--
+
+.box-br[
+`[]` have to be associated with an **object** that has dimensions  
+.small[(Always)]
+]
+
+---
+layout: false
+# Improving code readability
+
+### Use spaces like you would in sentences:
+
+```r
+a &lt;- mean(c(4, 10, 13))
+```
+
+is easier to read than 
+
+
+```r
+a&lt;-mean(c(4,10,13))
+```
+
+(But they are equivalent, coding-wise)
+
+---
+# Improving code readability
+
+### Don't be afraid to use line breaks ('Enters') to make the code more readable
+
+
+```r
+a &lt;- data.frame(exp = c("A", "B", "A", "B", "A", "B"), 
+                sub = c("A1", "A1", "A2", "A2", "A3", "A3"), 
+                res = c(10, 12, 45, 12, 12, 13))
+```
+
+vs.
+
+
+```r
+a &lt;- data.frame(exp = c("A", "B", "A", "B", "A", "B"), sub = c("A1", "A1", "A2", "A2", "A3", "A3"), res = c(10, 12, 45, 12, 12, 13))
+```
+
+
+---
+class: section
+layout: false
+# Reproducible research
+
+---
+# What is reproducible research?
+
+## Remembering what you've done (and sharing)
+- Keep scripts
+- Annotate scripts (use comments)
+- Date scripts!
+- Compile scripts into reports or notebooks
+- Include version information
+    - `devtools::session_info()`
+
+.box-b[We can use the "Compile Report" button in RStudio to create an HTML report of your work]
+
+---
+class: section
+layout: false
+# tidyverse?
+
+---
+# R base vs. tidyverse
+
+## R base
+- R base is basic R
+- Most packages used are installed and loaded by default
+
+
+--
+
+## `tidyverse`
+- Collection of 'new' packages developed by a team closely affiliated with RStudio
+- Packages designed to work well together
+- Use a slightly different syntax
+- Among others, includes packages used for data transformations and visualizations:
+    - e.g., `ggplot2`, `dplyr`, `tidyr`
+
+--
+
+&gt; Can be helpful to understand whether functions are `tidyverse` or R base functions
+
+
+---
+# Wrapping up: Further reading
+
+- http://www.cookbook-r.com
+- [R for Data Science](http://r4ds.had.co.nz)
+- [R base cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/05/base-r.pdf)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
