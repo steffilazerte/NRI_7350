@@ -8,6 +8,8 @@ navbar:
       href: prep.html
     - text: "Slides"
       href: slides.html
+    - text: "Recordings"
+      href: recordings.html
     - text: "Contact"
       href: contact.html
 output:
