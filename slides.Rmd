@@ -9,7 +9,7 @@ Answers to the mini-assignments will be available after the Lab :)
 ## Slides
 
 ```{r, include = FALSE}
-after_date <- c(0)
+after_date <- 1
 f <- "slides"
 
 
@@ -50,12 +50,20 @@ list.files(path = "_labs",  full.names = TRUE,
   str_subset("pdf|answers", negate = TRUE) %>%
   file.copy(f, overwrite = TRUE, recursive = TRUE)
 
-# MOVE AFTER
+# MOVE AFTER PDF/HTML
 if(length(after_date) > 0){
+  
+  # PDF
   after <- list.files(path = "_labs/Handouts", pattern = ".pdf", full.names = TRUE) %>%
     str_subset("answers") %>%
     str_subset(glue_collapse(glue("_labs/Handouts/{after_date} "), sep = "|"))
   file.copy(after, f, overwrite = TRUE)
+  
+  # HTML
+  list.files(path = "_labs",  full.names = TRUE,
+             pattern = str_remove_all(after, "_labs/Handouts/|.pdf")) %>%
+    str_subset("pdf", negate = TRUE) %>%
+    file.copy(f, overwrite = TRUE, recursive = TRUE)
 }
 
 slides <- tibble(file = list.files("./slides", full.names = TRUE),
