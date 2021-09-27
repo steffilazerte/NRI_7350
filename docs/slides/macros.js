@@ -9,10 +9,13 @@ remark.macros.label = function (right, top, width) {
 };
 
 
-remark.macros.img = function (x, y, width, attr, caption) {
+remark.macros.img = function (x, y, width, alt, attr, caption, href) {
   var url = this;
+  var img = '<img src="' + url + '" alt="' + alt + '" />'
+  if(typeof href != "undefined") var img = '<a href = "' + href + '">' + img + '</a>'
   var extra = "";
   if(typeof caption == "undefined") var caption = "";
+  if(typeof attr == "undefined") var attr = "";
   if(x == "center" & y != "center") {
     x = "right: 50%";
     extra = " -webkit-transform: translate(50%, 0); ";
@@ -27,36 +30,20 @@ remark.macros.img = function (x, y, width, attr, caption) {
 
   return '<div class = "fig" style = "position: absolute; ' + x + '; ' + y + '; width: ' + width + '; ' + extra + '">' +
             '<div style = "position: relative;">' +
-               '<img src="' + url + '" />' +
+               img +
                '<div class = "attr">' + attr + '</div>' +
             '</div>' +
             '<div class = "caption">' + caption + '</div>' +
          '</div>';
 };
 
-remark.macros.hl = function (right, top, width, height, colour){
+remark.macros.hl = function (right, top, width, height){
   var text = this;
-  if(typeof colour == "undefined") var colour = "inherited";
-  return '<div class = "highlightbox" style = "background-color: ' + colour + '; position: absolute; top: ' + top + '; right: ' + right + '; width: ' + width + '; height: ' + height + '"> ' + text + '</div>';
+  return '<div class = "highlightbox" style = "position: absolute; top: ' + top + '; right: ' + right + '; width: ' + width + '; height: ' + height + '"> ' + text + '</div>';
 }
 
 remark.macros.cross = function(pos1, pos2, dim){
   return '<svg width="' + dim + '" style = "position: absolute; ' + pos1 + '; ' + pos2 + ';"><line x1="0" y1="0" x2="100" y2="200" style="stroke:rgb(255,0,0);stroke-width:2"></svg>';
-}
-
-remark.macros.spacer = function(padding){
-  return '<div style = "padding: ' + padding + '"></div>';
-}
-
-remark.macros.here = function(x, y, colour){
-  if(typeof colour == "undefined") var colour = "var(--here)";
-  var text = this;
-  return '<div style = "position: absolute; ' + x + '; ' + y + '; color: ' + colour + ';">' + text + '</div>';
-}
-
-remark.macros.note = function(right, bottom, height){
-  var text = this;
-  return '<div class = "note" style = "display: table; position: absolute; right: ' + right + '; bottom: ' + bottom + '; height: ' + height + '"><div style = "display: table-cell; vertical-align: middle">' + text + '</div></div>';
 }
 
 remark.macros.arrow = function(x1, y1, x2, y2, size, colour){
@@ -99,4 +86,30 @@ remark.macros.arrow = function(x1, y1, x2, y2, size, colour){
   var width = Math.max(x1, x2) + 25
   var height = Math.max(y1, y2) + 25
   return '<svg class = centre-arrow; style = "position: absolute; left: ' + x + 'px; top: ' + y + 'px; width: ' + width + 'px; height: ' + height + 'px;" xmlns="http://www.w3.org/2000/svg"><defs><marker id="' + name + '" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto-start-reverse" markerUnits="strokeWidth" viewBox="0 0 15 15"><path d="M0,0 L0,6 L9,3 z" fill="' + colour + '" /></marker></defs><line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" marker-end="url(#' + name + ')" stroke = "' + colour + '" stroke-width = "' + size + '"></svg>';
+}
+
+remark.macros.spacer = function(padding){
+  return '<div style = "padding: ' + padding + '"></div>';
+}
+
+remark.macros.here = function(x, y, colour){
+  if(typeof colour == "undefined") var colour = "black";
+  var text = this;
+  return '<div style = "position: absolute; ' + x + '; ' + y + '; color: ' + colour + ';">' + text + '</div>';
+}
+
+remark.macros.note = function(right, bottom, height){
+  var text = this;
+  return '<div class = "note" style = "display: table; position: absolute; right: ' + right + '; bottom: ' + bottom + '; height: ' + height + '"><div style = "display: table-cell; vertical-align: middle">' + text + '</div></div>';
+}
+
+remark.macros.info = function(align, x, y){
+  if(align == "v") {
+    return '<div style = "position:absolute; text-align: right; ' + x + '; ' +  y + ';line-height: 1.75;">@steffilazerte<img src = "./Figures/logos/twitter_black.png" style = "height: 40px; vertical-align:middle; margin-left: 25px;"><br>steffilazerte<img src = "./Figures/logos/github.png" style = "height: 40px; vertical-align:middle; margin-left: 25px;"><br>steffilazerte.ca<img src = "./Figures/logos/web.png" style = "height: 40px; vertical-align:middle;margin-left: 25px;"><br>sel@steffilazerte.ca<img src = "./Figures/logos/email.svg" style = "height: 25px; vertical-align:middle;margin-left: 28px;"></div>'
+  }
+
+  if(align == "h") {
+    return '<div style = "position:absolute; text-align: right; ' + x + '; ' + y + '; margin-bottom: 20px;"><img src = "./Figures/logos/twitter_black.png" style = "height: 40px; vertical-align:middle;">  @steffilazerte <img src = "./Figures/logos/github.png" style = "height: 40px; vertical-align:middle; margin-left: 25px;"> steffilazerte <img src = "./Figures/logos/web.png" style = "height: 40px; vertical-align:middle; margin-left: 25px;"> steffilazerte.ca <img src = "./Figures/logos/email.svg" style = "height: 25px; vertical-align:middle; margin-left: 25px;"> sel@steffilazerte.ca</div>'
+  }
+
 }

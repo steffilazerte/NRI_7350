@@ -10,20 +10,20 @@ Answers to the mini-assignments will be available after the Lab :)
 
 ```{r, include = FALSE}
 
-### First compiles slides in _labs/0_RUN.R
-
-after_date <- 1
-f <- "slides"
-
-
 library(tidyverse)
 library(glue)
 library(magrittr)
 
-file.copy(c("_labs/pres_styles.css", 
-            "_labs/global_styles.css",
-            "_labs/macros.js",
-            "_labs/figures"), f, recursive = TRUE)
+### First compiles slides in _labs/0_RUN.R
+f <- "slides"
+after_date <- 2
+
+if(!dir.exists(f)) dir.create("slides")
+
+file.copy(from = c("_labs/pres_styles.css", 
+                   "_labs/global_styles.css",
+                   "_labs/macros.js",
+                   "_labs/figures"), f, recursive = TRUE)
 
 labs <- tribble(
   ~f,                         ~nice,                                 ~answers,
@@ -39,8 +39,6 @@ labs <- tribble(
 
 ```{r getdata, include = FALSE}
 # MOVE SLIDES
-
-if(dir.exists(dirname(f)) && !dir.exists(f)) dir.create(f)
 
 # MOVE BEFORE PDF
 before <- list.files(path = "_labs/Handouts", full.names = TRUE) %>%
@@ -60,14 +58,18 @@ if(length(after_date) > 0){
   # PDF
   after <- list.files(path = "_labs/Handouts", pattern = ".pdf", full.names = TRUE) %>%
     str_subset("answers") %>%
-    str_subset(glue_collapse(glue("_labs/Handouts/{after_date} "), sep = "|"))
+    str_subset(glue_collapse(glue("_labs/Handouts/{0:after_date} "), sep = "|"))
   file.copy(after, f, overwrite = TRUE)
   
   # HTML
-  list.files(path = "_labs",  full.names = TRUE,
-             pattern = str_remove_all(after, "_labs/Handouts/|.pdf")) %>%
-    str_subset("pdf", negate = TRUE) %>%
-    file.copy(f, overwrite = TRUE, recursive = TRUE)
+  if(length(after) > 0) {
+    after %>% 
+      str_remove_all("_labs/Handouts/|.pdf") %>%
+      glue_collapse(sep = "|") %>%
+      list.files(path = "_labs",  full.names = TRUE, pattern = .) %>%
+      str_subset("pdf", negate = TRUE) %>%
+      file.copy(f, overwrite = TRUE, recursive = TRUE)
+  }
 }
 
 slides <- tibble(file = list.files("./slides", full.names = TRUE),

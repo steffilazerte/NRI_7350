@@ -237,6 +237,7 @@ tr:nth-child(even) { background: #eee }
   position: absolute;
   bottom: 2%;
   line-height: 1.4;
+  z-index: 10;
 }
 
 .footnote-right {
@@ -245,6 +246,7 @@ tr:nth-child(even) { background: #eee }
   bottom: 2%;
   right: 2%;
   line-height: 1.4;
+  z-index: 10;
 }
 
 ul {
