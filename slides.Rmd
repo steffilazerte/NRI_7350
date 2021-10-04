@@ -16,8 +16,7 @@ library(magrittr)
 
 ### First compiles slides in _labs/0_RUN.R
 f <- "slides"
-after_date <- 2
-
+after_date <- 3
 if(!dir.exists(f)) dir.create("slides")
 
 file.copy(from = c("_labs/pres_styles.css", 
