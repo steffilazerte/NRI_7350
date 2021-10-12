@@ -16,7 +16,10 @@ library(magrittr)
 
 ### First compiles slides in _labs/0_RUN.R
 f <- "slides"
-after_date <- 3
+after_date <- lubridate::as_date(c("2021-09-15", "2021-09-22", "2021-09-29", 
+                                   "2021-10-06", "2021-10-13", "2021-10-20"))
+after_date <- max(which(after_date < Sys.Date()))
+
 if(!dir.exists(f)) dir.create("slides")
 
 file.copy(from = c("_labs/pres_styles.css", 

@@ -1,0 +1,3489 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>NRI 7350 - Lab 4</title>
+    <meta charset="utf-8" />
+    <script src="4 Regressions and ANOVAs - answers_files/header-attrs-2.9/header-attrs.js"></script>
+    <link rel="stylesheet" href="pres_styles.css" type="text/css" />
+    <link rel="stylesheet" href="global_styles.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: title-slide, nobar
+
+
+
+
+
+
+![:img right:0, bottom: 0, 65%, , ](./R Figs/title-plot-regression-1.png)
+![:img right: 15%, top: 5%, 30%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/lter_penguins.png)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+## NRI 7350
+# Linear Models
+Regressions,    
+ANOVAs, and   
+Model assumptions
+
+---
+class: section
+
+# Getting started (again)
+
+Open RStudio  
+Open your NRI project  
+Open a **new** script for today:  
+
+File &gt; New File &gt; R Script
+
+&lt;br&gt;
+
+Make sure to load packages at the top:  
+`library(tidyverse)`&lt;br&gt;
+`library(palmerpenguins)`
+
+
+
+---
+# How Are we Doing?
+
+![:img center, bottom: 0, 75%, ,](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/debugging.jpg)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+---
+class: section
+# Linear Models
+
+---
+# Linear Models
+
+### Running models in R
+
+&lt;code class ='r hljs remark-code'&gt;lm(&lt;strong&gt;&lt;span style="color:#440154"&gt;y&lt;/span&gt;&lt;/strong&gt; ~ &lt;strong&gt;&lt;span style="color:deeppink"&gt;x1&lt;/span&gt;&lt;/strong&gt; + &lt;strong&gt;&lt;span style="color:deeppink"&gt;x2&lt;/span&gt;&lt;/strong&gt;, data = data)&lt;/code&gt;
+
+
+- &lt;strong&gt;&lt;span style="color:#440154"&gt;**y**&lt;/span&gt;&lt;/strong&gt; is the **&lt;strong&gt;&lt;span style="color:#440154"&gt;response&lt;/span&gt;&lt;/strong&gt;** variable (**dependent**)
+- &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; are the **&lt;strong&gt;&lt;span style="color:deeppink"&gt;explanatory&lt;/span&gt;&lt;/strong&gt;** variables (**independent**, **predictor**)
+
+Here we're assuming a **continuous** &lt;strong&gt;&lt;span style="color:#440154"&gt;**y**&lt;/span&gt;&lt;/strong&gt;
+
+--
+
+### Different types of models
+
+- If we only have one &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; which is continuous, this is a **simple linear regression**
+- If both &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; are continuous, this is a **multiple linear regression**
+- If both &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; are categorical, this is an **ANOVA**
+- If &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x1**&lt;/span&gt;&lt;/strong&gt; is continuous and &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x2**&lt;/span&gt;&lt;/strong&gt; is categorical, this is an **ANCOVA**
+
+
+--
+
+![:box 50%, 85%, 30%](R will figure it out for you)
+
+---
+# Regressions
+
+### Real example
+
+- Is penguin body mass a function of skeletal size?   
+- Can it be predicted by flipper length and bill length?
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-4-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Regressions
+
+### Real example
+
+
+&lt;code class ='r hljs remark-code'&gt;lm(&lt;strong&gt;&lt;span style="color:#440154"&gt;body_mass_g&lt;/span&gt;&lt;/strong&gt; ~ &lt;strong&gt;&lt;span style="color:deeppink"&gt;flipper_length_mm&lt;/span&gt;&lt;/strong&gt; + &lt;strong&gt;&lt;span style="color:deeppink"&gt;bill_length_mm&lt;/span&gt;&lt;/strong&gt;, data = penguins)&lt;/code&gt;
+
+```
+
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Coefficients:
+##       (Intercept)  flipper_length_mm     bill_length_mm  
+##         -5736.897             48.145              6.047
+
+```
+
+
+.footnote[As we have **two continuous** predictors, this is technically a *multiple* regression]
+
+
+---
+# Regressions
+
+### Real example
+
+
+&lt;code class ='r hljs remark-code'&gt;lm(&lt;strong&gt;&lt;span style="color:#440154"&gt;body_mass_g&lt;/span&gt;&lt;/strong&gt; ~ &lt;strong&gt;&lt;span style="color:deeppink"&gt;flipper_length_mm&lt;/span&gt;&lt;/strong&gt; + &lt;strong&gt;&lt;span style="color:deeppink"&gt;bill_length_mm&lt;/span&gt;&lt;/strong&gt;, data = penguins)&lt;/code&gt;
+
+```
+
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Coefficients:
+*##       (Intercept)  flipper_length_mm     bill_length_mm  
+*##         -5736.897             48.145              6.047
+
+```
+
+
+![:box 50%, 70%, 55%](Hmm, not a lot of detail...&lt;br&gt;Only &lt;code&gt;Intercept&lt;/code&gt; and Slopes&lt;br&gt; (&lt;code&gt;flipper_length_mm&lt;/code&gt; and &lt;code&gt;bill_length_mm&lt;/code&gt;&amp;rpar;)
+
+
+.footnote[As we have **two** predictors, this is technically a *multiple* regression]
+
+
+---
+# Regressions
+
+### Assign model to `m` .small[(or any other name you want to give it)]
+
+&lt;code class ='r hljs remark-code'&gt;m &lt;- lm(&lt;strong&gt;&lt;span style="color:#440154"&gt;body_mass_g&lt;/span&gt;&lt;/strong&gt; ~ &lt;strong&gt;&lt;span style="color:deeppink"&gt;flipper_length_mm&lt;/span&gt;&lt;/strong&gt; + &lt;strong&gt;&lt;span style="color:deeppink"&gt;bill_length_mm&lt;/span&gt;&lt;/strong&gt;, data = penguins)&lt;/code&gt;
+
+`m` is a model object
+
+```r
+class(m)
+```
+
+```
+## [1] "lm"
+```
+
+This contains all the information about the model
+
+
+---
+class: split-25
+# Regressions
+
+Use `summary()` to show summary table:
+
+.columnl[
+
+```r
+summary(m)
+```
+]
+
+.columnr[
+.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]
+]
+
+
+![:box 50%, 40%, 50%](&lt;strong&gt;Your turn!&lt;/strong&gt;&lt;br&gt;Create a model with your response variable by two of your &lt;em&gt;continuous&lt;/em&gt; predictors.&lt;br&gt;&lt;br&gt;Look at the output of &lt;code&gt;summary(&amp;rpar;&lt;/code&gt;)
+
+
+--
+
+![:box 50%, 75%, 40%](&lt;strong&gt;Wait!&lt;/strong&gt;&lt;br&gt;Shouldn't interpret until we know the model is solid)
+
+
+---
+# Model Diagnostics
+
+### Model Assumptions
+
+- Normality (of residuals)
+- Constant Variance (no heteroscedasticity)
+
+### Other cautions
+
+- Influential observations (Cook's D)
+- Multiple collinearity (with more than one `x` or explanatory variables)
+
+.footnote[There are other assumptions (independence, etc.) but they reflect experimental design, not patterns in the data]
+
+---
+class: split-45
+# Model Diagnostics
+
+First let's get our relevant variables into a diagnostic data frame:
+
+- **`residuals`** (regular and standardized)
+- **`fitted` values**
+- **`cooks` distance**
+- **`obs` number**
+
+.footnote[Remember! `n()` only works *inside* `summarize()`/`mutate()`]
+
+.columnl[.small[
+
+```r
+d &lt;- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d &lt;- mutate(d, obs = 1:n())
+```
+]]
+
+--
+.columnr[
+.small[
+
+```r
+head(d)
+```
+
+```
+##     residuals std_residuals   fitted        cooks obs
+## 1  536.220898   1.368529806 3213.779 5.539153e-03   1
+## 2  343.077607   0.873050231 3456.922 1.609402e-03   2
+## 3 -645.064115  -1.644516798 3895.064 3.797384e-03   3
+## 5 -327.003441  -0.833002736 3777.003 1.992863e-03   4
+## 6    1.707668   0.004338503 3648.292 3.338060e-08   5
+## 7  412.430396   1.051400111 3212.570 3.272886e-03   6
+```
+]]
+
+---
+# Side Note: `tidyverse` functions
+
+- From `dplyr` package (part of `tidyverse`)
+
+
+&lt;code class ='r hljs remark-code'&gt;&lt;strong&gt;&lt;span style="color:#440154"&gt;d&lt;/span&gt;&lt;/strong&gt; &lt;- mutate(&lt;strong&gt;&lt;span style="color:#440154"&gt;d&lt;/span&gt;&lt;/strong&gt;, obs = 1:n())&lt;/code&gt;
+
+### `mutate()`
+- `tidyverse` functions always start with the &lt;span style="color:#440154"&gt;**data**&lt;/span&gt;, followed by **&lt;span style="color:#277F8E"&gt;other arguments&lt;/span&gt;**
+- `mutate()` adds **&lt;span style="color:#277F8E"&gt;new columns&lt;/span&gt;** to your data
+- Also note: `1:5` is the same as `c(1,2,3,4,5)`
+
+.footnote[Remember! `n()` only works *inside* `summarize()`/`mutate()`]
+
+---
+class: split-50
+# Normality
+
+.columnl[
+### Histogram of residuals
+
+```r
+ggplot(data = d, aes(x = std_residuals)) +
+  geom_histogram(bins = 20)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-14-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.columnr[
+### QQ Normality plot of residuals
+
+```r
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-15-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: split-45
+# Variance and Influence
+
+.columnl[
+### Check heteroscedasticity
+.small[
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-16-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+.columnr[
+### Cook's D
+.small[
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+* geom_hline(yintercept = 1, linetype = "dotted") +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-17-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+
+---
+class: split-45
+# Variance and Influence
+
+.columnl[
+### Check heteroscedasticity
+.small[
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-18-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+.columnr[
+### Cook's D
+.small[
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-19-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+--
+
+.box-b[Pretty good!]
+
+
+---
+class: split-50
+# What is a 'Good' Normality Plot?
+
+
+
+### Problematic
+.columnl[
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-21-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.columnr[
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-22-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: split-50
+# What is a 'Good' Normality Plot?
+
+### Good
+.columnl[
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-23-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.columnr[
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-24-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+--
+
+![:box 50%, 50%, 40%](No clear cutoff!)
+
+
+---
+class: split-50
+# What is a 'Good' Heteroscedasticity Plot?
+
+## Problematic
+.columnl[
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-25-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.columnr[
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-26-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: split-50
+# What is a 'Good' Heteroscedasticity Plot?
+
+## Good
+.columnl[
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-27-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.columnr[
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-28-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+--
+
+![:box 50%, 50%, 40%](No clear cutoff!)
+
+---
+# Multicollinearity (collinearity)
+
+- Only relevant with **more than one explanatory variable**
+- If explanatory variables too correlated, can interfere with model interpretation
+
+--
+
+### Look at our two explanatory variables
+
+```r
+ggplot(data = penguins, aes(x = flipper_length_mm, y = bill_length_mm)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-29-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+--
+
+.box-b[Correlated, but not necessarily a problem]
+
+---
+# Multicollinearity (collinearity)
+
+- Only relevant with **more than one explanatory variable**
+- If explanatory variables too correlated, can interfere with model interpretation
+- Correlations between variables *might* be problematic (but not necessarily)
+
+
+### Use `vif()` function from `car` package .small[(vif = variance inflation factor*)]
+
+```r
+library(car)
+vif(m)
+```
+
+```
+## flipper_length_mm    bill_length_mm 
+##          1.756154          1.756154
+```
+
+![:spacer 10px]()
+Hmm, that's pretty good (looking for &lt; 10)
+
+
+.footnote[\* Can be interpreted as how much influence the variable has on the model]
+
+---
+layout: true
+class: split-40
+# Interpreting Regressions
+
+
+```r
+m &lt;- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = penguins)
+```
+
+
+.columnl[
+
+```r
+summary(m)
+```
+]
+
+---
+.columnr[
+.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]
+]
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+*## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+*##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Model
+]
+
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+*##                    Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+*## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+*## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Effects
+]
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+*##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Missing observations
+]
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+*## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### R&lt;sup&gt;2&lt;/sup&gt; and adjusted R&lt;sup&gt;2&lt;/sup&gt;
+
+- Adjusted for the number of parameters
+]
+
+
+
+---
+.columnr[
+.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+*##                    Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+*## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+*## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]
+]
+
+![:spacer 20px]()
+
+.columnl[
+### Specific Details
+
+.medium[
+- `Estimate`
+    - Slope of the effect
+    
+- `Std. Error` 
+    - Variability in the estimates
+    
+- `t value`
+   - Test statistic
+   - Think of it as a holistic combination of estimate and variability
+
+- `Pr(&gt;|t|)` 
+    - **P-value**, significance of the results
+    - Probability of getting `t-value` by chance
+]]
+
+
+
+
+---
+.columnr[
+.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]
+]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+**Intercept**
+
+.medium[
+- Significant (P &lt; 2e&lt;sup&gt;-16&lt;/sup&gt;\*)
+- Penguins with a flipper length of 0 mm are predicted to have a body mass of -5736.9g
+    - Not useful!
+]]
+
+.columnl[
+.footnote[.small[\* 2e&lt;sup&gt;-16&lt;/sup&gt; = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+---
+.columnr[
+.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+*## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]
+]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+Effect of **Flipper Length**
+
+.medium[
+- Significant (P &lt; 2e&lt;sup&gt;-16&lt;/sup&gt;*)
+- For each 1 mm increase in flipper length, body mass is predicted to increase by 48.14g
+]]
+
+.columnl[
+.footnote[.small[\* 2e&lt;sup&gt;-16&lt;/sup&gt; = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+*## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+Effect of **Flipper Length**
+
+.medium[
+- Significant (P &lt; 2e&lt;sup&gt;-16&lt;/sup&gt;*)
+- For each 1 mm increase in flipper length, body mass is predicted to increase by 48.14g
+]
+
+Effect of **Bill Length**
+
+.medium[
+- Non-significant (P = 0.244, i.e. P &lt; 0.05)
+- Therefore no effect (in this model)  
+  (and no interpretation of estimate)
+]]
+
+
+.columnl[
+.footnote[.small[\* 2e&lt;sup&gt;-16&lt;/sup&gt; = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+--
+
+
+![:box 50%, 20%, 70%](&lt;strong&gt;Therefore&lt;/strong&gt;&lt;br&gt;There is a significant relationship between flipper length and body mass&lt;br&gt;But not between bill length and body mass (when including flipper length&amp;rpar;)
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+*## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+*## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+Effect of **Flipper Length**
+
+.medium[
+- Significant (P &lt; 2e&lt;sup&gt;-16&lt;/sup&gt;*)
+- For each 1 mm increase in flipper length, body mass is predicted to increase by 48.14g
+]
+
+Effect of **Bill Length**
+
+.medium[
+- Non-significant (P = 0.244, i.e. P &lt; 0.05)
+- Therefore no effect (and no interpretation of estimate)
+]]
+
+
+.columnl[
+.footnote[.small[\* 2e&lt;sup&gt;-16&lt;/sup&gt; = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+
+
+![:box 30%, 40%, 30%](y = mx + b)
+
+--
+
+![:box 30%, 40%, 30%](y = m&lt;sub&gt;1&lt;/sub&gt;x&lt;sub&gt;1&lt;/sub&gt; + m&lt;sub&gt;2&lt;/sub&gt;x&lt;sub&gt;2&lt;/sub&gt; + b)
+
+--
+
+![:box 30%, 40%, 30%](y = 48.14x&lt;sub&gt;1&lt;/sub&gt; + 6.05x&lt;sub&gt;2&lt;/sub&gt; + (-5736.9&amp;rpar;)
+
+
+---
+layout: false
+class: split-40
+
+# Extra
+
+### Why no effect of Bill Length?
+
+.columnl[
+![:spacer 35px]()
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-42-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+--
+
+.columnr[
+.small[
+
+```r
+m &lt;- lm(body_mass_g ~ bill_length_mm, data = penguins)
+summary(m)
+```
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ bill_length_mm, data = penguins)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1762.08  -446.98    32.59   462.31  1636.86 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     362.307    283.345   1.279    0.202    
+*## bill_length_mm   87.415      6.402  13.654   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 645.4 on 340 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.3542,	Adjusted R-squared:  0.3523 
+## F-statistic: 186.4 on 1 and 340 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+---
+class: split-40, space-list
+
+# Extra
+
+### Why no effect of Bill Length?
+
+.columnl[
+
+- Hypothesis of *causation* but really just correlation
+- Flipper length is the 'better' predictor of body mass
+- When flipper length in the model, no extra variation explained by bill length
+- When flipper length *not* in the model, some variation left to be explained
+]
+
+.columnr[
+.small[
+
+```r
+m &lt;- lm(body_mass_g ~ bill_length_mm, data = penguins)
+summary(m)
+```
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ bill_length_mm, data = penguins)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1762.08  -446.98    32.59   462.31  1636.86 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     362.307    283.345   1.279    0.202    
+*## bill_length_mm   87.415      6.402  13.654   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 645.4 on 340 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.3542,	Adjusted R-squared:  0.3523 
+## F-statistic: 186.4 on 1 and 340 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+
+---
+# Homework (Practice)*
+
+Consider **bill depth** your response and **bill length** your predictor
+
+1. Plot the relationship
+2. Create a linear regression model
+3. Check your model diagnostics
+    - Normality
+    - Heteroscedasticity
+    - Influential variables (i.e. Cook's distance)
+4. Interpret the results of your model
+
+.footnote[\* Not to be handed in, answers posted in these slides next week]
+
+---
+exclude: FALSE
+
+# Homework (Practice) Answers
+
+1\. Plot the relationship
+
+
+```r
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) + 
+  geom_point() + 
+  stat_smooth(method = "lm")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-45-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+&gt; Looks like there's definitely a relationship
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+2\. Create a linear regression model
+
+
+```r
+m &lt;- lm(bill_depth_mm ~ bill_length_mm, data = penguins)
+```
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics
+
+
+```r
+d &lt;- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d &lt;- mutate(d, obs = 1:n())
+d
+```
+
+```
+##         residuals std_residuals   fitted        cooks obs
+## 1    1.138864e+00  5.934367e-01 17.56114 9.242306e-04   1
+## 2   -1.271277e-01 -6.619739e-02 17.52713 1.070470e-05   2
+## 3    5.408893e-01  2.815911e-01 17.45911 1.682589e-04   3
+## 5    1.534813e+00  8.012445e-01 17.76519 2.609482e-03   4
+## 6    3.055868e+00  1.597348e+00 17.54413 6.414686e-03   5
+## 7    2.218595e-01  1.155596e-01 17.57814 3.639240e-05   6
+## 8    2.047366e+00  1.068025e+00 17.55263 2.932579e-03   7
+## 9    1.137574e-01  5.946167e-02 17.98624 2.228931e-05   8
+## 10   2.885425e+00  1.506316e+00 17.31457 3.727910e-03   9
+## 11  -5.716639e-01 -2.979755e-01 17.67166 2.962510e-04  10
+## 12  -3.716639e-01 -1.937124e-01 17.67166 1.252215e-04  11
+## 13   2.089063e-01  1.087197e-01 17.39109 2.205657e-05  12
+## 14   3.596353e+00  1.883252e+00 17.60365 1.010901e-02  13
+## 15   3.156268e+00  1.655660e+00 17.94373 1.582700e-02  14
+## 16   2.631056e-02  1.372336e-02 17.77369 7.806848e-07  15
+## 17   1.404855e+00  7.323832e-01 17.59514 1.514240e-03  16
+## 18   3.427936e+00  1.791849e+00 17.27206 4.996598e-03  17
+## 19   4.392637e-01  2.295562e-01 17.96074 3.166945e-04  18
+## 20   4.525511e+00  2.374213e+00 16.97449 9.342805e-03  19
+## 21   6.283361e-01  3.275244e-01 17.67166 3.579005e-04  20
+## 22   1.019834e+00  5.317653e-01 17.68017 9.603925e-04  21
+## 23   1.366796e+00  7.138244e-01 17.83320 2.383424e-03  22
+## 24   4.623446e-01  2.409262e-01 17.63766 1.799497e-04  23
+## 25  -3.866426e-01 -2.014081e-01 17.58664 1.125918e-04  24
+## 26   1.015783e+00  5.305890e-01 17.88422 1.459065e-03  25
+## 27   1.166396e+00  6.074312e-01 17.43360 7.440885e-04  26
+## 28   4.578936e-01  2.383584e-01 17.44211 1.165862e-04  27
+## 29   9.368382e-01  4.883983e-01 17.66316 7.810571e-04  28
+## 30   1.457894e+00  7.594942e-01 17.44211 1.181870e-03  29
+## 31  -8.271277e-01 -4.308134e-01 17.52713 4.531471e-04  30
+## 32   3.773233e-01  1.967375e-01 17.72268 1.440852e-04  31
+## 33   2.728723e-01  1.420922e-01 17.52713 4.931884e-05  32
+## 34   1.491902e+00  7.771431e-01 17.40810 1.160061e-03  33
+## 35  -7.906937e-01 -4.125831e-01 17.79069 7.306193e-04  34
+## 36   3.547366e+00  1.856778e+00 17.55263 8.803811e-03  35
+## 37   2.413357e+00  1.260020e+00 17.58664 4.386626e-03  36
+## 38   1.202430e+00  6.259686e-01 17.29757 6.331778e-04  37
+## 39   1.611332e+00  8.407634e-01 17.68867 2.442060e-03  38
+## 40   1.598379e+00  8.330413e-01 17.50162 1.603367e-03  39
+## 41   2.178084e-01  1.136174e-01 17.78219 5.446392e-05  40
+## 42   9.833999e-01  5.120182e-01 17.41660 5.120677e-04  41
+## 43   6.752978e-01  3.524538e-01 17.82470 5.717729e-04  42
+## 44   2.563970e+00  1.337318e+00 17.13603 2.619048e-03  43
+## 45  -8.396809e-01 -4.379702e-01 17.73968 7.399384e-04  44
+## 46   1.281374e+00  6.676370e-01 17.51863 1.068058e-03  45
+## 47   1.608906e+00  8.381648e-01 17.39109 1.308267e-03  46
+## 48   1.202830e+00  6.273646e-01 17.69717 1.386037e-03  47
+## 49   7.529779e-02  3.929257e-02 17.82470 7.108817e-06  48
+## 50   3.910932e+00  2.047309e+00 17.28907 6.629368e-03  49
+## 51   1.813744e-01  9.444103e-02 17.51863 2.139907e-05  50
+## 52   1.423885e+00  7.418546e-01 17.47611 1.206913e-03  51
+## 53  -9.723491e-03 -5.078237e-03 17.90972 1.406049e-07  52
+## 54   2.185425e+00  1.139261e+00 17.31457 2.138542e-03  53
+## 55   1.477659e-01  7.720881e-02 17.95223 3.526030e-05  54
+## 56   1.234413e+00  6.427463e-01 17.36559 7.371185e-04  55
+## 57  -6.963837e-02 -3.627000e-02 17.56964 3.519928e-06  56
+## 58   1.366396e+00  7.117307e-01 17.43360 1.021141e-03  57
+## 59  -1.182192e+00 -6.170119e-01 17.78219 1.604483e-03  58
+## 60   1.411332e+00  7.362283e-01 17.68867 1.873461e-03  59
+## 61  -9.502086e-01 -4.961446e-01 17.85021 1.192498e-03  60
+## 62   3.725911e+00  1.949754e+00 17.37409 6.811981e-03  61
+## 63  -6.886682e-01 -3.590286e-01 17.68867 4.460735e-04  62
+## 64   8.089063e-01  4.210764e-01 17.39109 3.306977e-04  63
+## 65  -6.906937e-01 -3.603818e-01 17.79069 5.575009e-04  64
+## 66   6.514170e-01  3.390210e-01 17.34858 1.997244e-04  65
+## 67  -1.667213e+00 -8.713253e-01 17.86721 3.799229e-03  66
+## 68   1.708906e+00  8.903784e-01 17.39109 1.475949e-03  67
+## 69  -1.233204e+00 -6.439649e-01 17.83320 1.940280e-03  68
+## 70   2.068421e+00  1.078095e+00 17.33158 1.962365e-03  69
+## 71   9.627446e-01  5.037231e-01 18.03726 1.754376e-03  70
+## 72   8.898765e-01  4.634768e-01 17.51012 5.059342e-04  71
+## 73  -3.186256e-01 -1.659118e-01 17.51863 6.603957e-05  72
+## 74   1.908506e+00  9.944436e-01 16.99149 1.622733e-03  73
+## 75  -3.672129e-01 -1.917101e-01 17.86721 1.843101e-04  74
+## 76   1.253442e+00  6.525028e-01 17.24656 6.519034e-04  75
+## 77  -6.080979e-01 -3.165278e-01 17.40810 1.927291e-04  76
+## 78   1.677323e+00  8.754996e-01 17.72268 2.847250e-03  77
+## 79  -1.707698e+00 -8.920311e-01 17.80770 3.530510e-03  78
+## 80   1.793928e+00  9.345730e-01 17.30607 1.424721e-03  79
+## 81  -7.437320e-01 -3.886526e-01 17.94373 8.787873e-04  80
+## 82   3.619446e-01  1.883066e-01 17.23806 5.397894e-05  81
+## 83   1.034813e+00  5.399422e-01 17.76519 1.186225e-03  82
+## 84   1.498779e+00  7.833984e-01 17.90122 3.285269e-03  83
+## 85   8.582545e-02  4.474427e-02 17.71417 7.319861e-06  84
+## 86   2.925911e+00  1.527837e+00 17.37409 4.200787e-03  85
+## 87   1.700804e+00  8.883539e-01 17.79920 3.440873e-03  86
+## 88   8.518169e-01  4.443347e-01 17.74818 7.753733e-04  87
+## 89   1.570847e+00  8.192567e-01 17.62915 2.039058e-03  88
+## 90   1.221860e+00  6.367960e-01 17.57814 1.103817e-03  89
+## 91   1.497914e-01  7.818484e-02 17.85021 2.963422e-05  90
+## 92   7.089063e-01  3.689990e-01 17.39109 2.539876e-04  91
+## 93  -8.947448e-01 -4.678832e-01 17.99474 1.401036e-03  92
+## 94   5.813744e-01  3.027566e-01 17.51863 2.198643e-04  93
+## 95  -5.076980e-01 -2.649172e-01 17.80770 3.120514e-04  94
+## 96   1.483400e+00  7.727300e-01 17.41660 1.165154e-03  95
+## 97   9.538425e-01  4.972111e-01 17.64616 7.802351e-04  96
+## 98   1.040889e+00  5.420662e-01 17.45911 6.231183e-04  97
+## 99  -1.971264e+00 -1.033070e+00 18.07126 7.820177e-03  98
+## 100  1.287451e+00  6.702053e-01 17.21255 6.712863e-04  99
+## 101 -9.723491e-03 -5.078237e-03 17.90972 1.406049e-07 100
+## 102  2.600404e+00  1.356996e+00 17.39960 3.470048e-03 101
+## 103 -1.680166e+00 -8.767050e-01 17.68017 2.606719e-03 102
+## 104  2.328336e+00  1.216113e+00 17.67166 4.914390e-03 103
+## 105  9.368382e-01  4.883983e-01 17.66316 7.810571e-04 104
+## 106  1.389877e+00  7.242235e-01 17.51012 1.234204e-03 105
+## 107 -4.036469e-01 -2.102888e-01 17.60365 1.273465e-04 106
+## 108  2.362345e+00  1.233664e+00 17.63766 4.697925e-03 107
+## 109 -6.461575e-01 -3.367572e-01 17.64616 3.580544e-04 108
+## 110  1.787451e+00  9.310614e-01 17.21255 1.293942e-03 109
+## 111 -1.146158e+00 -5.975563e-01 17.64616 1.126577e-03 110
+## 112  3.291502e+00  1.719965e+00 17.00850 4.722759e-03 111
+## 113  1.898765e-01  9.886401e-02 17.51012 2.303441e-05 112
+## 114  2.202430e+00  1.148119e+00 17.29757 2.124273e-03 113
+## 115  3.181374e+00  1.663254e+00 17.51863 6.583737e-03 114
+## 116  1.044940e+00  5.438653e-01 17.25506 4.565108e-04 115
+## 117 -6.036469e-01 -3.145085e-01 17.60365 2.848064e-04 116
+## 118  2.785825e+00  1.456898e+00 17.71417 7.712203e-03 117
+## 119 -8.502086e-01 -4.438982e-01 17.85021 9.547084e-04 118
+## 120  1.208906e+00  6.294996e-01 17.39109 7.386183e-04 119
+## 121 -6.076980e-01 -3.171115e-01 17.80770 4.470858e-04 120
+## 122  2.119834e+00  1.106865e+00 17.68017 4.149478e-03 121
+## 123 -4.676128e-01 -2.434444e-01 17.46761 1.279321e-04 122
+## 124  1.134413e+00  5.906214e-01 17.36559 6.225277e-04 123
+## 125 -1.992719e+00 -1.042210e+00 17.89272 5.710757e-03 124
+## 126  1.566396e+00  8.160987e-01 17.43360 1.341948e-03 125
+## 127  1.335738e-02  6.957648e-03 17.58664 1.343784e-07 126
+## 128  9.429148e-01  4.908297e-01 17.35709 4.241573e-04 127
+## 129 -4.696384e-01 -2.446245e-01 17.56964 1.600899e-04 128
+## 130  8.639702e-01  4.495803e-01 17.13603 2.973822e-04 129
+## 131  2.878510e-01  1.499655e-01 17.61215 6.597464e-05 130
+## 132  1.978949e+00  1.031116e+00 17.22105 1.594191e-03 131
+## 133  7.433148e-01  3.877368e-01 17.75669 6.011595e-04 132
+## 134  8.028297e-01  4.186003e-01 17.69717 6.174664e-04 133
+## 135 -4.615752e-02 -2.405186e-02 17.64616 1.827078e-06 134
+## 136  1.089063e-01  5.667666e-02 17.39109 5.994334e-06 135
+## 137 -3.587107e-01 -1.872553e-01 17.85871 1.728908e-04 136
+## 138  2.632387e+00  1.374141e+00 17.46761 4.054208e-03 137
+## 139 -1.239681e+00 -6.468227e-01 17.73968 1.612823e-03 138
+## 140  3.898765e-01  2.030085e-01 17.51012 9.711553e-05 139
+## 141 -3.676128e-01 -1.913769e-01 17.46761 7.906565e-05 140
+## 142 -2.336043e-01 -1.215921e-01 17.43360 2.984658e-05 141
+## 143 -2.656285e+00 -1.395444e+00 18.15629 1.646374e-02 142
+## 144 -4.251022e-01 -2.212716e-01 17.42510 9.723744e-05 143
+## 145 -9.141745e-01 -4.767544e-01 17.71417 8.304794e-04 144
+## 146  1.130362e+00  5.890303e-01 17.56964 9.274094e-04 145
+## 147  1.047366e+00  5.456897e-01 17.55263 7.674597e-04 146
+## 148  6.263106e-01  3.267294e-01 17.77369 4.423796e-04 147
+## 149 -2.470221e-02 -1.289031e-02 17.82470 7.650759e-07 148
+## 150  4.283361e-01  2.232541e-01 17.67166 1.663212e-04 149
+## 151 -7.247022e-01 -3.782496e-01 17.82470 6.584943e-04 150
+## 152  1.142915e+00  5.950380e-01 17.35709 6.231747e-04 151
+## 153 -3.765987e+00 -1.970755e+00 16.96599 6.551384e-03 152
+## 154 -3.344043e-01 -1.742861e-01 16.63440 1.005550e-04 153
+## 155 -2.644932e+00 -1.381343e+00 16.74493 4.944971e-03 154
+## 156 -1.434404e+00 -7.481717e-01 16.63440 1.850135e-03 155
+## 157 -2.338455e+00 -1.219969e+00 16.83846 3.175337e-03 156
+## 158 -3.431979e+00 -1.794396e+00 16.93198 5.743320e-03 157
+## 159 -2.425502e+00 -1.264880e+00 17.02550 2.514480e-03 158
+## 160 -1.614975e+00 -8.413224e-01 16.91497 1.309499e-03 159
+## 161 -3.804047e+00 -1.990470e+00 17.20405 5.834348e-03 160
+## 162 -1.506472e+00 -7.847137e-01 16.90647 1.156796e-03 161
+## 163 -3.708098e+00 -1.940547e+00 17.40810 7.166427e-03 162
+## 164 -6.194256e-01 -3.226915e-01 16.71943 2.866427e-04 163
+## 165 -3.317000e+00 -1.733378e+00 17.01700 4.747908e-03 164
+## 166 -2.170438e+00 -1.132337e+00 16.77044 3.152199e-03 165
+## 167 -2.391494e+00 -1.247146e+00 16.99149 2.547993e-03 166
+## 168 -9.939192e-01 -5.179906e-01 16.69392 7.802058e-04 167
+## 169 -3.814575e+00 -1.996373e+00 17.31457 6.515353e-03 168
+## 170 -1.502421e+00 -7.833586e-01 16.70242 1.749987e-03 169
+## 171 -2.457485e+00 -1.281830e+00 16.95749 2.826017e-03 170
+## 172 -1.644932e+00 -8.576038e-01 16.74493 1.912628e-03 171
+## 173 -2.317400e+00 -1.210493e+00 16.61740 5.010523e-03 172
+## 174 -2.551009e+00 -1.330611e+00 17.05101 2.711538e-03 173
+## 175 -2.431979e+00 -1.268554e+00 16.93198 2.883988e-03 174
+## 176 -1.148983e+00 -5.981944e-01 16.94898 6.260576e-04 175
+## 177 -4.138055e+00 -2.167635e+00 17.23806 7.055579e-03 176
+## 178 -1.865987e+00 -9.722847e-01 16.96599 1.608395e-03 177
+## 179 -2.802021e+00 -1.462252e+00 17.10202 3.159942e-03 178
+## 180 -1.821451e+00 -9.495004e-01 16.82145 1.994403e-03 179
+## 181 -2.487443e+00 -1.298378e+00 16.78744 3.993179e-03 180
+## 182 -1.334404e+00 -6.959353e-01 16.63440 1.601161e-03 181
+## 183 -1.563962e+00 -8.148433e-01 16.86396 1.350228e-03 182
+## 184 -3.046558e+00 -1.590852e+00 17.24656 3.851174e-03 183
+## 185 -2.551009e+00 -1.330611e+00 17.05101 2.711538e-03 184
+## 186  1.181800e+00  6.227336e-01 15.81820 5.412211e-03 185
+## 187 -1.910923e+00 -9.968563e-01 16.71092 2.779001e-03 186
+## 188 -4.704383e-01 -2.449907e-01 16.77044 1.480894e-04 187
+## 189 -3.563562e+00 -1.863430e+00 17.26356 5.352831e-03 188
+## 190  1.894765e-01  9.857006e-02 17.11052 1.439823e-05 189
+## 191 -3.544532e+00 -1.853217e+00 17.14453 5.001025e-03 190
+## 192 -1.044932e+00 -5.444349e-01 16.74493 7.718106e-04 191
+## 193 -3.555060e+00 -1.858915e+00 17.25506 5.283988e-03 192
+## 194 -6.684128e-01 -3.483315e-01 16.66841 3.730573e-04 193
+## 195 -3.334004e+00 -1.742293e+00 17.03400 4.708117e-03 194
+## 196 -1.668413e+00 -8.702789e-01 16.66841 2.324305e-03 195
+## 197 -6.918936e-01 -3.607699e-01 16.59189 4.719199e-04 196
+## 198 -3.278540e+00 -1.712902e+00 17.17854 4.292729e-03 197
+## 199 -3.117000e+00 -1.628020e+00 17.01700 4.192614e-03 198
+## 200 -6.918936e-01 -3.607699e-01 16.59189 4.719199e-04 199
+## 201 -3.768013e+00 -1.971454e+00 17.06801 5.833339e-03 200
+## 202 -1.242506e+00 -6.468147e-01 17.04251 6.483743e-04 201
+## 203 -2.723477e+00 -1.421498e+00 16.92348 3.669427e-03 202
+## 204 -2.661936e+00 -1.390145e+00 16.76194 4.828616e-03 203
+## 205 -2.651009e+00 -1.383060e+00 17.05101 2.928290e-03 204
+## 206 -1.625902e+00 -8.483062e-01 16.62590 2.421400e-03 205
+## 207 -2.531979e+00 -1.320979e+00 16.93198 3.126036e-03 206
+## 208 -1.659511e+00 -8.642937e-01 17.05951 1.139125e-03 207
+## 209 -3.261536e+00 -1.703934e+00 17.16154 4.235596e-03 208
+## 210 -2.017000e+00 -1.051100e+00 17.01700 1.755590e-03 209
+## 211 -2.712549e+00 -1.415293e+00 17.21255 2.979899e-03 210
+## 212 -1.300396e+00 -6.783433e-01 16.60040 1.636778e-03 211
+## 213 -3.234004e+00 -1.689587e+00 17.03400 4.429923e-03 212
+## 214 -2.057485e+00 -1.072412e+00 16.95749 1.980917e-03 213
+## 215 -3.099996e+00 -1.619124e+00 17.00000 4.233975e-03 214
+## 216 -5.688128e-01 -2.975257e-01 16.26881 6.082565e-04 215
+## 217 -2.791494e+00 -1.456955e+00 16.99149 3.471627e-03 216
+## 218  1.485915e-01  7.743151e-02 16.65141 1.913276e-05 217
+## 219 -2.557485e+00 -1.334259e+00 16.95749 3.060689e-03 218
+## 220 -4.769149e-01 -2.485001e-01 16.67691 1.864270e-04 219
+## 221 -2.987043e+00 -1.559466e+00 17.18704 3.572264e-03 220
+## 222 -1.574889e+00 -8.219539e-01 16.57489 2.535885e-03 221
+## 223 -1.829953e+00 -9.539081e-01 16.82995 1.978332e-03 222
+## 224 -1.340481e+00 -6.980436e-01 16.94048 8.639154e-04 223
+## 225 -1.187443e+00 -6.186265e-01 16.78744 9.099927e-04 224
+## 226 -2.131979e+00 -1.111459e+00 16.93198 2.216356e-03 225
+## 227 -1.940481e+00 -1.011285e+00 16.94048 1.810376e-03 226
+## 228 -7.534341e-01 -3.924567e-01 16.75343 3.939652e-04 227
+## 229 -2.646957e+00 -1.381718e+00 16.84696 3.999585e-03 228
+## 230 -2.408809e-01 -1.256312e-01 16.54088 6.377210e-05 229
+## 231 -3.242506e+00 -1.694044e+00 17.04251 4.415605e-03 230
+## 232 -6.425064e-01 -3.343201e-01 17.04251 1.733738e-04 231
+## 233 -2.210923e+00 -1.153928e+00 16.71092 3.720056e-03 232
+## 234 -8.218511e-01 -4.292121e-01 16.42185 9.480558e-04 233
+## 235 -2.255460e+00 -1.176407e+00 16.85546 2.855377e-03 234
+## 236 -7.344043e-01 -3.828252e-01 16.63440 4.849875e-04 235
+## 237 -3.268013e+00 -1.707427e+00 17.06801 4.387933e-03 236
+## 238  7.336127e-01  3.826089e-01 16.56639 5.603371e-04 237
+## 239 -2.795545e+00 -1.458847e+00 17.19554 3.138850e-03 238
+## 240 -2.323877e+00 -1.214798e+00 16.52388 6.151666e-03 239
+## 241 -2.846957e+00 -1.486775e+00 16.84696 4.626823e-03 240
+## 242  5.441404e-01  2.840396e-01 16.45586 3.881127e-04 241
+## 243 -1.846957e+00 -9.627260e-01 16.84696 1.947308e-03 242
+## 244  6.526425e-01  3.407230e-01 16.44736 5.680213e-04 243
+## 245 -2.517000e+00 -1.312853e+00 17.01700 2.733869e-03 244
+## 246 -5.769149e-01 -3.006186e-01 16.67691 2.728039e-04 245
+## 247 -2.402021e+00 -1.252463e+00 17.10202 2.322148e-03 246
+## 248 -8.663873e-01 -4.518947e-01 16.56639 7.815194e-04 247
+## 249 -8.854170e-01 -4.614308e-01 16.68542 6.307573e-04 248
+## 250 -2.297970e+00 -1.198481e+00 16.89797 2.733474e-03 249
+## 251 -2.370438e+00 -1.237130e+00 16.77044 3.759897e-03 250
+## 252 -4.088087e-02 -2.132091e-02 16.54088 1.836819e-06 251
+## 253 -1.761936e+00 -9.186669e-01 16.76194 2.115474e-03 252
+## 254  8.672213e-01  4.545030e-01 16.13278 1.794658e-03 253
+## 255 -1.372464e+00 -7.148861e-01 16.87246 1.022855e-03 254
+## 256 -1.710923e+00 -8.922645e-01 16.71092 2.227734e-03 255
+## 257 -3.063962e+00 -1.600817e+00 16.86396 5.182289e-03 256
+## 258 -8.064724e-01 -4.198154e-01 16.90647 3.315229e-04 257
+## 259 -2.640081e+00 -1.377570e+00 17.34008 3.237810e-03 258
+## 260 -5.453319e-01 -2.849868e-01 16.34533 4.846441e-04 259
+## 261 -3.204047e+00 -1.673680e+00 17.20405 4.139028e-03 260
+## 262 -1.695945e+00 -8.840249e-01 16.79594 1.823257e-03 261
+## 263 -1.391894e+00 -7.261915e-01 16.59189 1.909861e-03 262
+## 264 -7.514085e-01 -3.916466e-01 16.65141 4.892627e-04 263
+## 265 -1.987043e+00 -1.035321e+00 17.18704 1.580793e-03 264
+## 266 -2.068724e-01 -1.079251e-01 16.50687 5.051238e-05 265
+## 267 -2.857485e+00 -1.491744e+00 16.95749 3.820858e-03 266
+## 268 -2.007957e-01 -1.051075e-01 16.20080 8.560371e-05 267
+## 269 -1.402021e+00 -7.299300e-01 17.10202 7.911256e-04 268
+## 270 -5.364298e-01 -2.794163e-01 16.73643 2.071817e-04 269
+## 271 -3.172464e+00 -1.657903e+00 16.87246 5.465195e-03 270
+## 273 -2.606472e+00 -1.360163e+00 16.90647 3.462907e-03 271
+## 274 -9.003958e-01 -4.695200e-01 16.60040 7.847033e-04 272
+## 275 -2.242506e+00 -1.169017e+00 17.04251 2.112010e-03 273
+## 276 -5.429064e-01 -2.829579e-01 16.64291 2.601838e-04 274
+## 277  9.680212e-01  5.039279e-01 16.93198 4.569236e-04 275
+## 278  2.865596e+00  1.498372e+00 16.63440 7.383972e-03 276
+## 279  2.676123e+00  1.399928e+00 16.52388 8.157909e-03 277
+## 280  1.674498e+00  8.721607e-01 17.02550 1.198434e-03 278
+## 281  3.395153e+00  1.781222e+00 16.40485 1.673476e-02 279
+## 282  7.574936e-01  3.941775e-01 17.04251 2.409830e-04 280
+## 283  1.234013e+00  6.424865e-01 16.96599 7.034198e-04 281
+## 284  1.676123e+00  8.752742e-01 16.52388 3.200211e-03 282
+## 285  1.925511e+00  1.003369e+00 16.97449 1.691352e-03 283
+## 286  3.376123e+00  1.769139e+00 16.52388 1.298384e-02 284
+## 287  8.765234e-01  4.562774e-01 16.92348 3.800826e-04 285
+## 288  3.810132e+00  1.999701e+00 16.48987 1.774923e-02 286
+## 289  4.105319e-01  2.136769e-01 16.88947 8.862061e-05 287
+## 290  1.635638e+00  8.545464e-01 16.46436 3.446669e-03 288
+## 291  1.170085e-01  6.088102e-02 16.98299 6.170717e-06 289
+## 292  3.008106e+00  1.573917e+00 16.59189 8.920230e-03 290
+## 293  3.391102e+00  1.775838e+00 16.60890 1.092824e-02 291
+## 294  1.845766e+00  9.710618e-01 15.95423 1.081632e-02 292
+## 295  1.659519e+00  8.645110e-01 16.94048 1.324081e-03 293
+## 296  1.497579e+00  7.808291e-01 16.70242 1.738724e-03 294
+## 297  1.943399e-02  1.011090e-02 17.28057 1.620941e-07 295
+## 298  7.380638e-01  3.844293e-01 16.76194 3.712061e-04 296
+## 299 -6.125490e-01 -3.187098e-01 17.21255 1.519596e-04 297
+## 300  2.816608e+00  1.473154e+00 16.58339 7.964772e-03 298
+## 301  9.850255e-01  5.128138e-01 16.91497 4.871567e-04 299
+## 302  2.535638e+00  1.326762e+00 16.46436 8.283229e-03 300
+## 303  1.808106e+00  9.438466e-01 16.59189 3.222832e-03 301
+## 304  2.323085e+00  1.212974e+00 16.67691 4.423411e-03 302
+## 305  8.595191e-01  4.473977e-01 16.94048 3.551903e-04 303
+## 306  3.603655e+00  1.891898e+00 16.39634 1.917179e-02 304
+## 307 -8.080979e-01 -4.206797e-01 17.40810 3.403520e-04 305
+## 308  4.522685e+00  2.384861e+00 16.27731 3.786033e-02 306
+## 309 -5.720639e-01 -2.976617e-01 17.27206 1.391548e-04 307
+## 310  2.250617e+00  1.176089e+00 16.54938 5.467870e-03 308
+## 311  1.940089e+00  1.012447e+00 16.65991 3.201729e-03 309
+## 312 -4.695748e-02 -2.444320e-02 16.84696 1.258724e-06 310
+## 313  1.461545e+00  7.614680e-01 16.83846 1.240383e-03 311
+## 314  4.235638e+00  2.226655e+00 16.46436 2.311334e-02 312
+## 315 -2.979703e-01 -1.550804e-01 16.89797 4.595914e-05 313
+## 316  3.563170e+00  1.871638e+00 16.33683 2.102843e-02 314
+## 317  2.780574e+00  1.452827e+00 16.71943 5.776060e-03 315
+## 318  5.425149e-01  2.823269e-01 16.95749 1.377261e-04 316
+## 319  2.542115e+00  1.329070e+00 16.55789 6.851224e-03 317
+## 320 -1.700004e-02 -8.844675e-03 17.01700 1.247129e-07 318
+## 321  1.342115e+00  7.003707e-01 16.55789 1.909665e-03 319
+## 322  1.933613e+00  1.009755e+00 16.56639 3.892733e-03 320
+## 323  1.274098e+00  6.644820e-01 16.62590 1.486905e-03 321
+## 324  2.880574e+00  1.505420e+00 16.71943 6.198989e-03 322
+## 325  2.193128e+00  1.146348e+00 16.50687 5.677024e-03 323
+## 326  6.485915e-01  3.380371e-01 16.65141 3.645292e-04 324
+## 327 -3.959447e-01 -2.061648e-01 16.79594 9.937875e-05 325
+## 328  2.484626e+00  1.299330e+00 16.51537 7.158405e-03 326
+## 329  3.000042e-01  1.560951e-01 17.00000 3.965343e-05 327
+## 330  3.125111e+00  1.635829e+00 16.57489 9.985280e-03 328
+## 331  2.793611e-02  1.453409e-02 17.27206 3.318494e-07 329
+## 332  2.352643e+00  1.230767e+00 16.44736 7.381179e-03 330
+## 333 -4.425064e-01 -2.302327e-01 17.04251 8.223708e-05 331
+## 334  3.206081e+00  1.677134e+00 16.69392 8.118129e-03 332
+## 335  2.182600e+00  1.139802e+00 16.61740 4.444566e-03 333
+## 336  2.391502e+00  1.247106e+00 17.00850 2.493153e-03 334
+## 337  3.027136e+00  1.585561e+00 16.47286 1.160234e-02 335
+## 338 -4.064724e-01 -2.115513e-01 16.90647 8.421640e-05 336
+## 339  4.212984e-06  2.191977e-06 17.00000 7.819982e-15 337
+## 340  3.658719e+00  1.927160e+00 16.14128 3.148828e-02 338
+## 341  9.129574e-01  4.750915e-01 17.18704 3.337042e-04 339
+## 342  1.531587e+00  7.987675e-01 16.66841 1.958707e-03 340
+## 343  2.433613e+00  1.271979e+00 16.56639 6.166214e-03 341
+## 344  2.082600e+00  1.087393e+00 16.61740 4.046623e-03 342
+```
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Normality
+
+
+```r
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-48-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+![:box 25%, 75%, 30%](Not bad, could be better, but good enough)
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Heteroscedasticity
+
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-49-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+![:box 25%, 75%, 30%](Again, not bad, could be better)
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Influence (Cook's d)
+
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-50-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+![:box 15%, 75%, 25%](Some interesting observations, but nothing crazy)
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+4\. Interpret the results of your model
+
+.small[
+
+```r
+summary(m)
+```
+
+```
+## 
+## Call:
+## lm(formula = bill_depth_mm ~ bill_length_mm, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.1381 -1.4263  0.0164  1.3841  4.5255 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    20.88547    0.84388  24.749  &lt; 2e-16 ***
+*## bill_length_mm -0.08502    0.01907  -4.459 1.12e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.922 on 340 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.05525,	Adjusted R-squared:  0.05247 
+## F-statistic: 19.88 on 1 and 340 DF,  p-value: 1.12e-05
+```
+]
+
+![:box 25%, 50%, 40%](Significant (p &lt; 0.0001&amp;rpar; relationship between bill length and bill depth. For every 1 mm increase in bill length, bill depth decreases by 0.085 mm&lt;br&gt;&lt;br&gt;Is this biologically meaningfull?)
+
+
+---
+class: section
+layout: false
+
+# ANOVAs
+
+---
+# Linear Models
+
+### Running models in R
+
+&lt;code class ='r hljs remark-code'&gt;lm(&lt;strong&gt;&lt;span style="color:#440154"&gt;y&lt;/span&gt;&lt;/strong&gt; ~ &lt;strong&gt;&lt;span style="color:deeppink"&gt;x1&lt;/span&gt;&lt;/strong&gt; + &lt;strong&gt;&lt;span style="color:deeppink"&gt;x2&lt;/span&gt;&lt;/strong&gt;, data = data)&lt;/code&gt;
+
+
+- &lt;strong&gt;&lt;span style="color:#440154"&gt;**y**&lt;/span&gt;&lt;/strong&gt; is the **&lt;strong&gt;&lt;span style="color:#440154"&gt;response&lt;/span&gt;&lt;/strong&gt;** variable (**dependent**)
+- &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; are the **&lt;strong&gt;&lt;span style="color:deeppink"&gt;explanatory&lt;/span&gt;&lt;/strong&gt;** variables (**independent**, **predictor**)
+
+Here we're assuming a **continuous** &lt;strong&gt;&lt;span style="color:#440154"&gt;**y**&lt;/span&gt;&lt;/strong&gt;
+
+--
+
+### Different types of models
+
+- If we only have one &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; which is continuous, this is a **simple linear regression**
+- If both &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; are continuous, this is a **multiple linear regression**
+- If both &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x**&lt;/span&gt;&lt;/strong&gt; are categorical, this is an **ANOVA**
+- If &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x1**&lt;/span&gt;&lt;/strong&gt; is continuous and &lt;strong&gt;&lt;span style="color:deeppink"&gt;**x2**&lt;/span&gt;&lt;/strong&gt; is categorical, this is an **ANCOVA**
+
+
+--
+
+![:box 50%, 85%, 30%](R will figure it out for you)
+
+
+---
+# ANOVAs
+
+### Real example
+
+- Are male penguins larger than female penguins? 
+- Are different species different sizes?
+- Can body mass be predicted by species and sex?
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-55-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# ANOVAs
+
+### Real example
+
+
+
+&lt;code class ='r hljs remark-code'&gt;m &lt;- lm(&lt;strong&gt;&lt;span style="color:#440154"&gt;body_mass_g&lt;/span&gt;&lt;/strong&gt; ~ &lt;strong&gt;&lt;span style="color:deeppink"&gt;species&lt;/span&gt;&lt;/strong&gt; + &lt;strong&gt;&lt;span style="color:deeppink"&gt;sex&lt;/span&gt;&lt;/strong&gt;, data = penguins)&lt;/code&gt;
+
+
+As we have two **categorical** predictors, this is an ANOVA
+
+
+![:box 50%, 45%, 50%](&lt;strong&gt;Your turn!&lt;/strong&gt;&lt;br&gt;Create a model with your response variable by your &lt;em&gt;one&lt;/em&gt; &lt;em&gt;categorical&lt;/em&gt; predictor.&lt;br&gt;&lt;br&gt;Look at the output of &lt;code&gt;summary(&amp;rpar;&lt;/code&gt; &lt;em&gt;and&lt;/em&gt; &lt;code&gt;anova(&amp;rpar;&lt;/code&gt;)
+
+--
+
+![:box 50%, 75%, 40%](&lt;strong&gt;Wait!&lt;/strong&gt;&lt;br&gt;Shouldn't interpret until we know the model is solid)
+
+---
+class: split-45
+# Model Diagnostics
+
+Same as before! Let's get our relevant variables into a diagnostic data frame:
+
+- **`residuals`** (regular and standardized)
+- **`fitted` values**
+- **`cooks` distance**
+- **`obs` number**
+
+.footnote[Remember! `n()` only works *inside* `summarize()`/`mutate()`]
+
+.columnl[.small[
+
+```r
+d &lt;- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d &lt;- mutate(d, obs = 1:n())
+```
+]]
+
+--
+.columnr[
+.small[
+
+```r
+head(d)
+```
+
+```
+##    residuals std_residuals   fitted        cooks obs
+## 1 -289.94196    -0.9201062 4039.942 0.0021071103   1
+## 2  427.61319     1.3590567 3372.387 0.0045831843   2
+## 3 -122.38681    -0.3879729 3372.387 0.0003754346   3
+## 5   77.61319     0.2460043 3372.387 0.0001509858   4
+## 6 -389.94196    -1.2387413 4039.942 0.0038112292   5
+## 7  252.61319     0.8013974 3372.387 0.0015994740   6
+```
+]]
+
+---
+class: split-50
+# Normality
+
+.columnl[
+#### Histogram of residuals
+.small[
+
+```r
+ggplot(data = d, aes(x = std_residuals)) +
+  geom_histogram(bins = 20)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-59-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+.columnr[
+#### QQ Normality plot of residuals
+.small[
+
+```r
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-60-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+---
+class: split-50
+# Variance and Influence
+
+.columnl[
+#### Check heteroscedasticity
+.small[
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-61-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+.columnr[
+#### Cook's D
+
+.small[
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+* geom_hline(yintercept = 1, linetype = "dotted") +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-62-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+---
+class: split-50
+# Variance and Influence
+
+.columnl[
+#### Check heteroscedasticity
+.small[
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-63-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+.columnr[
+#### Cook's D
+
+.small[
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-64-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+
+--
+![:box 50%, 80%, 20%](Overall not too bad)
+
+---
+# Multicollinearity (collinearity)
+
+### `vif()` function from `car` package
+
+```r
+library(car)
+vif(m)
+```
+
+```
+##             GVIF Df GVIF^(1/(2*Df))
+## species 1.000146  2        1.000036
+## sex     1.000146  1        1.000073
+```
+
+Here we consider the `GVIF^(1/2*Df))` value*
+
+Looks good!
+
+.footnote[\* See `?vif` and the reference therein: Fox, J. and Monette, G. (1992) Generalized collinearity diagnostics. JASA, 87, 178–183.]
+
+---
+layout: true
+class: split-40
+# Interpreting ANOVA Summaries
+
+
+
+```r
+m &lt;- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.columnl[
+
+```r
+summary(m)
+```
+]
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+## speciesChinstrap    26.92      46.48   0.579    0.563    
+## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+##   (11 observations deleted due to missingness)
+## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+*## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+## speciesChinstrap    26.92      46.48   0.579    0.563    
+## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+##   (11 observations deleted due to missingness)
+## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Model
+]
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+*## speciesChinstrap    26.92      46.48   0.579    0.563    
+*## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+*## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+##   (11 observations deleted due to missingness)
+## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Effects
+]
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+## speciesChinstrap    26.92      46.48   0.579    0.563    
+## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+*##   (11 observations deleted due to missingness)
+## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Missing observations
+]
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+## speciesChinstrap    26.92      46.48   0.579    0.563    
+## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+##   (11 observations deleted due to missingness)
+*## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### R&lt;sup&gt;2&lt;/sup&gt; and adjusted R&lt;sup&gt;2&lt;/sup&gt;
+
+- Adjusted for the number of parameters
+]
+
+
+
+---
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+*## speciesChinstrap    26.92      46.48   0.579    0.563    
+*## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+*## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+##   (11 observations deleted due to missingness)
+## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+![:spacer 20px]()
+
+.columnl[
+### Specific Details
+
+.medium[
+- `Estimate`
+    - Treatment contrasts
+    - Average *differences* among categories compared to the base category
+    
+- `Std. Error` 
+    - Variability in the estimates
+    
+- `t value`
+   - Test statistic
+
+- `Pr(&gt;|t|)` 
+    - **P-value**, significance of the *differences*
+    - Probability of getting `t-value` by chance
+]]
+
+--
+
+![:box 50%, 50%, 60%](Easier to interpret estimates if we consider a simpler model)
+
+---
+layout: false
+class: split-40, space-list
+
+# Interpreting ANOVA Summaries
+
+
+```r
+m &lt;- lm(body_mass_g ~ species, data = penguins)
+```
+
+.columnl[
+
+```r
+summary(m)
+```
+]
+
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species, data = penguins)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1126.02  -333.09   -33.09   316.91  1223.98 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       3700.66      37.62   98.37   &lt;2e-16 ***
+*## speciesChinstrap    32.43      67.51    0.48    0.631    
+*## speciesGentoo     1375.35      56.15   24.50   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 462.3 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.6697,	Adjusted R-squared:  0.6677 
+## F-statistic: 343.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+--
+
+.columnl[
+Effect of **Species**
+.medium[
+- `(Intercept)` represents base category (i.e. Adelie penguins)
+- Adelie have mean body mass of 3700.66 g 
+- On average, Chinstrap penguins are 32.43 g heavier than Adelie penguins
+- On average, Gentoo penguins are 1375.35 g heavier than Adelie penguins
+]]
+
+![:img right: 10%, top: 0%, 30%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/lter_penguins.png)
+
+--
+
+![:box 50%, 50%, 30%](Back to original model)
+
+
+---
+class: split-40, space-list
+# Interpreting ANOVA Summaries
+
+
+
+```r
+m &lt;- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.columnl[
+
+```r
+summary(m)
+```
+]
+
+.columnr[.small[
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ species + sex, data = penguins)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -816.87 -217.80  -16.87  227.61  882.20 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)       3372.39      31.43 107.308   &lt;2e-16 ***
+*## speciesChinstrap    26.92      46.48   0.579    0.563    
+*## speciesGentoo     1377.86      39.10  35.236   &lt;2e-16 ***
+*## sexmale            667.56      34.70  19.236   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 316.6 on 329 degrees of freedom
+##   (11 observations deleted due to missingness)
+## Multiple R-squared:  0.8468,	Adjusted R-squared:  0.8454 
+## F-statistic: 606.1 on 3 and 329 DF,  p-value: &lt; 2.2e-16
+```
+]]
+
+.columnl[
+Effect of **Species** and **Sex**
+
+.medium[
+- `(Intercept)` represents base category but is a combination of factors
+- Much more complicated to interpret
+- Comparisons are often not of interest anyway (unless you've set up contrasts, which are advanced stats but awesome!)
+]]
+
+--
+
+![:box 80%, 80%, 25%](So let's look at ANOVA tables instead)
+
+---
+class: split-50
+layout: true
+# Interpreting ANOVA Tables
+
+### Type I
+
+
+```r
+m &lt;- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.columnl[
+
+```r
+anova(m)
+```
+]
+
+---
+.columnr[.small[
+
+```
+## Analysis of Variance Table
+## 
+## Response: body_mass_g
+##            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+## species     2 145190219 72595110  724.21 &lt; 2.2e-16 ***
+## sex         1  37090262 37090262  370.01 &lt; 2.2e-16 ***
+## Residuals 329  32979185   100241                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+---
+.columnr[.small[
+
+```
+## Analysis of Variance Table
+## 
+## Response: body_mass_g
+##            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+*## species     2 145190219 72595110  724.21 &lt; 2.2e-16 ***
+*## sex         1  37090262 37090262  370.01 &lt; 2.2e-16 ***
+## Residuals 329  32979185   100241                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+.columnl[
+Overall effects of **Species** and **Sex**
+
+.medium[
+- Yes there are differences among **Species** (P &lt; 2.2e&lt;sup&gt;-16&lt;/sup&gt;)
+- Yes there are differences between **Sexes** (P &lt; 2.2e&lt;sup&gt;-16&lt;/sup&gt;)
+]]
+
+--
+
+![:box 75%, 75%, 45%](Not a whole lot of information... &lt;br&gt;Stay tuned for &lt;strong&gt;Post-Hoc&lt;/strong&gt; tests next week!)
+
+---
+class: split-50, space-list
+layout: false
+# Interpreting ANOVA Tables
+
+### Type I
+
+.columnl[
+.small[
+
+```r
+*m1 &lt;- lm(body_mass_g ~ species + sex, data = penguins)
+anova(m1)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: body_mass_g
+##            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+*## species     2 145190219 72595110  724.21 &lt; 2.2e-16 ***
+*## sex         1  37090262 37090262  370.01 &lt; 2.2e-16 ***
+## Residuals 329  32979185   100241                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+.columnr[
+.small[
+
+```r
+*m2 &lt;- lm(body_mass_g ~ sex + species, data = penguins)
+anova(m2)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: body_mass_g
+##            Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+*## sex         1  38878897 38878897  387.86 &lt; 2.2e-16 ***
+*## species     2 143401584 71700792  715.29 &lt; 2.2e-16 ***
+## Residuals 329  32979185   100241                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+- For Type I ANOVAs, order matters with unbalanced samples
+    - See that `Sum sq`, `Mean Sq` and `F value` all differ between the models
+- Here, pretty minor, but important to remember with greater unbalances
+
+---
+layout: true
+class: split-50
+
+# Interpreting ANOVA Tables
+
+### Type III
+
+
+```r
+m &lt;- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.footnote[Type II ANOVAs do exist as well, but generally we use Type III in natural sciences]
+
+.columnl[
+
+```r
+library(car)
+Anova(m, type = "3")
+```
+]
+
+---
+.columnr[.small[
+
+```
+## Anova Table (Type III tests)
+## 
+## Response: body_mass_g
+##                 Sum Sq  Df  F value    Pr(&gt;F)    
+## (Intercept) 1154266972   1 11514.96 &lt; 2.2e-16 ***
+## species      143401584   2   715.29 &lt; 2.2e-16 ***
+## sex           37090262   1   370.01 &lt; 2.2e-16 ***
+## Residuals     32979185 329                       
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+
+---
+layout: false
+class: split-50
+
+# Interpreting ANOVA Tables
+
+### Type III
+
+.columnl[
+.small[
+
+```r
+*m1 &lt;- lm(body_mass_g ~ species + sex, data = penguins)
+Anova(m1, type = "3")
+```
+
+```
+## Anova Table (Type III tests)
+## 
+## Response: body_mass_g
+##                 Sum Sq  Df  F value    Pr(&gt;F)    
+## (Intercept) 1154266972   1 11514.96 &lt; 2.2e-16 ***
+*## species      143401584   2   715.29 &lt; 2.2e-16 ***
+*## sex           37090262   1   370.01 &lt; 2.2e-16 ***
+## Residuals     32979185 329                       
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+.columnr[
+.small[
+
+```r
+*m2 &lt;- lm(body_mass_g ~ sex + species, data = penguins)
+Anova(m2, type = "3")
+```
+
+```
+## Anova Table (Type III tests)
+## 
+## Response: body_mass_g
+##                 Sum Sq  Df  F value    Pr(&gt;F)    
+## (Intercept) 1154266972   1 11514.96 &lt; 2.2e-16 ***
+*## sex           37090262   1   370.01 &lt; 2.2e-16 ***
+*## species      143401584   2   715.29 &lt; 2.2e-16 ***
+## Residuals     32979185 329                       
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]]
+
+- Type III and unbalanced samples: Not dependent on variable order
+
+---
+# Homework (Practice)*
+
+Consider flipper length your response variable and species and sex your predictor variables
+
+1. Plot the relationship between flipper length and species and between flipper length and sex
+
+2. Create an ANOVA model of flipper length and species
+
+3. Check diagnostics
+
+4. Interpret the **summary table** 
+
+5. Interpret the **ANOVA Table**
+
+6. Create an ANOVA model of flipper length and species and sex
+
+7. Check diagnostics
+
+8. Interpret the **ANOVA Table**
+
+.footnote[\* Not to be handed in, answers posted in these slides next week]
+
+---
+exclude: FALSE
+class: split-50
+# Homework (Practice) Answers
+
+1\. Plot the relationship between flipper length and species and between flipper length and sex
+
+
+.footnote[Use `drop_na()` to omit missing `sex`]
+
+.columnl[
+.small[
+
+```r
+ggplot(data = penguins, 
+       aes(x = species, y = flipper_length_mm)) +
+  geom_boxplot()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-86-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+.columnr[
+.small[
+
+```r
+ggplot(data = drop_na(penguins), 
+       aes(x = sex, y = flipper_length_mm)) +
+  geom_boxplot()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-87-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]]
+
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+2\. Create an ANOVA model of flipper length and species
+
+
+```r
+m &lt;- lm(flipper_length_mm ~ species, data = penguins)
+```
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics
+
+
+```r
+d &lt;- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d &lt;- mutate(d, obs = 1:n())
+d
+```
+
+```
+##        residuals std_residuals   fitted        cooks obs
+## 1    -8.95364238  -1.354279014 189.9536 4.065712e-03   1
+## 2    -3.95364238  -0.596704490 189.9536 7.927420e-04   2
+## 3     5.04635762   0.761875329 189.9536 1.291496e-03   3
+## 5     3.04635762   0.459673943 189.9536 4.706508e-04   4
+## 6     0.04635762   0.006992853 189.9536 1.089881e-07   5
+## 7    -8.95364238  -1.354279014 189.9536 4.065712e-03   6
+## 8     5.04635762   0.761875329 189.9536 1.291496e-03   7
+## 9     3.04635762   0.459673943 189.9536 4.706508e-04   8
+## 10    0.04635762   0.006992853 189.9536 1.089881e-07   9
+## 11   -3.95364238  -0.596704490 189.9536 7.927420e-04  10
+## 12   -9.95364238  -1.506497837 189.9536 5.024596e-03  11
+## 13   -7.95364238  -1.202336705 189.9536 3.208257e-03  12
+## 14    1.04635762   0.157844495 189.9536 5.552612e-05  13
+## 15    8.04635762   1.216413288 189.9536 3.283490e-03  14
+## 16   -4.95364238  -0.747854240 189.9536 1.244476e-03  15
+## 17    5.04635762   0.761875329 189.9536 1.291496e-03  16
+## 18    7.04635762   1.064694521 189.9536 2.518062e-03  17
+## 19   -5.95364238  -0.899155542 189.9536 1.797639e-03  18
+## 20    4.04635762   0.610712824 189.9536 8.303584e-04  19
+## 21  -15.95364238  -2.427426485 189.9536 1.290794e-02  20
+## 22   -9.95364238  -1.506497837 189.9536 5.024596e-03  21
+## 23   -0.95364238  -0.143857376 189.9536 4.612200e-05  22
+## 24   -4.95364238  -0.747854240 189.9536 1.244476e-03  23
+## 25   -9.95364238  -1.506497837 189.9536 5.024596e-03  24
+## 26   -2.95364238  -0.445675516 189.9536 4.424385e-04  25
+## 27   -6.95364238  -1.050639325 189.9536 2.452233e-03  26
+## 28   -2.95364238  -0.445675516 189.9536 4.424385e-04  27
+## 29  -17.95364238  -2.738103033 189.9536 1.634716e-02  28
+## 30   -9.95364238  -1.506497837 189.9536 5.024596e-03  29
+## 31  -11.95364238  -1.811892817 189.9536 7.246655e-03  30
+## 32  -11.95364238  -1.811892817 189.9536 7.246655e-03  31
+## 33   -1.95364238  -0.294736665 189.9536 1.935652e-04  32
+## 34   -5.95364238  -0.899155542 189.9536 1.797639e-03  33
+## 35    5.04635762   0.761875329 189.9536 1.291496e-03  34
+## 36    6.04635762   0.913192246 189.9536 1.854064e-03  35
+## 37    0.04635762   0.006992853 189.9536 1.089881e-07  36
+## 38   -9.95364238  -1.506497837 189.9536 5.024596e-03  37
+## 39   -8.95364238  -1.354279014 189.9536 4.065712e-03  38
+## 40   -5.95364238  -0.899155542 189.9536 1.797639e-03  39
+## 41   -7.95364238  -1.202336705 189.9536 3.208257e-03  40
+## 42    5.04635762   0.761875329 189.9536 1.291496e-03  41
+## 43   -3.95364238  -0.596704490 189.9536 7.927420e-04  42
+## 44    6.04635762   0.913192246 189.9536 1.854064e-03  43
+## 45   -4.95364238  -0.747854240 189.9536 1.244476e-03  44
+## 46    0.04635762   0.006992853 189.9536 1.089881e-07  45
+## 47   -7.95364238  -1.202336705 189.9536 3.208257e-03  46
+## 48  -10.95364238  -1.659025042 189.9536 6.084910e-03  47
+## 49    0.04635762   0.006992853 189.9536 1.089881e-07  48
+## 50    1.04635762   0.157844495 189.9536 5.552612e-05  49
+## 51   -3.95364238  -0.596704490 189.9536 7.927420e-04  50
+## 52   -1.95364238  -0.294736665 189.9536 1.935652e-04  51
+## 53    0.04635762   0.006992853 189.9536 1.089881e-07  52
+## 54   10.04635762   1.520625971 189.9536 5.118637e-03  53
+## 55   -2.95364238  -0.445675516 189.9536 4.424385e-04  54
+## 56    1.04635762   0.157844495 189.9536 5.552612e-05  55
+## 57   -3.95364238  -0.596704490 189.9536 7.927420e-04  56
+## 58    3.04635762   0.459673943 189.9536 4.706508e-04  57
+## 59   -8.95364238  -1.354279014 189.9536 4.065712e-03  58
+## 60    4.04635762   0.610712824 189.9536 8.303584e-04  59
+## 61   -4.95364238  -0.747854240 189.9536 1.244476e-03  60
+## 62    5.04635762   0.761875329 189.9536 1.291496e-03  61
+## 63   -4.95364238  -0.747854240 189.9536 1.244476e-03  62
+## 64    2.04635762   0.308728023 189.9536 2.123734e-04  63
+## 65   -5.95364238  -0.899155542 189.9536 1.797639e-03  64
+## 66    2.04635762   0.308728023 189.9536 2.123734e-04  65
+## 67    5.04635762   0.761875329 189.9536 1.291496e-03  66
+## 68   -1.95364238  -0.294736665 189.9536 1.935652e-04  67
+## 69    0.04635762   0.006992853 189.9536 1.089881e-07  68
+## 70    8.04635762   1.216413288 189.9536 3.283490e-03  69
+## 71    0.04635762   0.006992853 189.9536 1.089881e-07  70
+## 72    0.04635762   0.006992853 189.9536 1.089881e-07  71
+## 73    6.04635762   0.913192246 189.9536 1.854064e-03  72
+## 74    7.04635762   1.064694521 189.9536 2.518062e-03  73
+## 75    0.04635762   0.006992853 189.9536 1.089881e-07  74
+## 76    5.04635762   0.761875329 189.9536 1.291496e-03  75
+## 77    1.04635762   0.157844495 189.9536 5.552612e-05  76
+## 78   -5.95364238  -0.899155542 189.9536 1.797639e-03  77
+## 79   -2.95364238  -0.445675516 189.9536 4.424385e-04  78
+## 80    5.04635762   0.761875329 189.9536 1.291496e-03  79
+## 81   -0.95364238  -0.143857376 189.9536 4.612200e-05  80
+## 82    6.04635762   0.913192246 189.9536 1.854064e-03  81
+## 83   -2.95364238  -0.445675516 189.9536 4.424385e-04  82
+## 84    3.04635762   0.459673943 189.9536 4.706508e-04  83
+## 85    1.04635762   0.157844495 189.9536 5.552612e-05  84
+## 86    4.04635762   0.610712824 189.9536 8.303584e-04  85
+## 87    0.04635762   0.006992853 189.9536 1.089881e-07  86
+## 88   -0.95364238  -0.143857376 189.9536 4.612200e-05  87
+## 89   -0.95364238  -0.143857376 189.9536 4.612200e-05  88
+## 90    0.04635762   0.006992853 189.9536 1.089881e-07  89
+## 91   12.04635762   1.826084387 189.9536 7.359505e-03  90
+## 92   15.04635762   2.287176547 189.9536 1.148153e-02  91
+## 93   -4.95364238  -0.747854240 189.9536 1.244476e-03  92
+## 94   -3.95364238  -0.596704490 189.9536 7.927420e-04  93
+## 95   -2.95364238  -0.445675516 189.9536 4.424385e-04  94
+## 96   18.04635762   2.752559125 189.9536 1.651643e-02  95
+## 97    0.04635762   0.006992853 189.9536 1.089881e-07  96
+## 98    6.04635762   0.913192246 189.9536 1.854064e-03  97
+## 99  -11.95364238  -1.811892817 189.9536 7.246655e-03  98
+## 100   2.04635762   0.308728023 189.9536 2.123734e-04  99
+## 101   2.04635762   0.308728023 189.9536 2.123734e-04 100
+## 102  13.04635762   1.979361527 189.9536 8.632083e-03 101
+## 103  -6.95364238  -1.050639325 189.9536 2.452233e-03 102
+## 104   0.04635762   0.006992853 189.9536 1.089881e-07 103
+## 105   3.04635762   0.459673943 189.9536 4.706508e-04 104
+## 106  -5.95364238  -0.899155542 189.9536 1.797639e-03 105
+## 107   9.04635762   1.368379901 189.9536 4.150349e-03 106
+## 108   0.04635762   0.006992853 189.9536 1.089881e-07 107
+## 109  -8.95364238  -1.354279014 189.9536 4.065712e-03 108
+## 110   7.04635762   1.064694521 189.9536 2.518062e-03 109
+## 111   8.04635762   1.216413288 189.9536 3.283490e-03 110
+## 112   1.04635762   0.157844495 189.9536 5.552612e-05 111
+## 113   3.04635762   0.459673943 189.9536 4.706508e-04 112
+## 114   7.04635762   1.064694521 189.9536 2.518062e-03 113
+## 115   1.04635762   0.157844495 189.9536 5.552612e-05 114
+## 116   6.04635762   0.913192246 189.9536 1.854064e-03 115
+## 117  -1.95364238  -0.294736665 189.9536 1.935652e-04 116
+## 118   9.04635762   1.368379901 189.9536 4.150349e-03 117
+## 119  -0.95364238  -0.143857376 189.9536 4.612200e-05 118
+## 120  -0.95364238  -0.143857376 189.9536 4.612200e-05 119
+## 121  -2.95364238  -0.445675516 189.9536 4.424385e-04 120
+## 122   8.04635762   1.216413288 189.9536 3.283490e-03 121
+## 123 -13.95364238  -2.118780628 189.9536 9.874435e-03 122
+## 124  12.04635762   1.826084387 189.9536 7.359505e-03 123
+## 125  -3.95364238  -0.596704490 189.9536 7.927420e-04 124
+## 126   9.04635762   1.368379901 189.9536 4.150349e-03 125
+## 127   1.04635762   0.157844495 189.9536 5.552612e-05 126
+## 128   5.04635762   0.761875329 189.9536 1.291496e-03 127
+## 129   1.04635762   0.157844495 189.9536 5.552612e-05 128
+## 130  20.04635762   3.065661869 189.9536 2.038018e-02 129
+## 131   0.04635762   0.006992853 189.9536 1.089881e-07 130
+## 132   7.04635762   1.064694521 189.9536 2.518062e-03 131
+## 133   3.04635762   0.459673943 189.9536 4.706508e-04 132
+## 134   9.04635762   1.368379901 189.9536 4.150349e-03 133
+## 135  -2.95364238  -0.445675516 189.9536 4.424385e-04 134
+## 136   0.04635762   0.006992853 189.9536 1.089881e-07 135
+## 137   1.04635762   0.157844495 189.9536 5.552612e-05 136
+## 138  10.04635762   1.520625971 189.9536 5.118637e-03 137
+## 139  -4.95364238  -0.747854240 189.9536 1.244476e-03 138
+## 140   3.04635762   0.459673943 189.9536 4.706508e-04 139
+## 141   3.04635762   0.459673943 189.9536 4.706508e-04 140
+## 142  -2.95364238  -0.445675516 189.9536 4.424385e-04 141
+## 143  -1.95364238  -0.294736665 189.9536 1.935652e-04 142
+## 144   0.04635762   0.006992853 189.9536 1.089881e-07 143
+## 145   2.04635762   0.308728023 189.9536 2.123734e-04 144
+## 146  -4.95364238  -0.747854240 189.9536 1.244476e-03 145
+## 147   0.04635762   0.006992853 189.9536 1.089881e-07 146
+## 148  -5.95364238  -0.899155542 189.9536 1.797639e-03 147
+## 149   5.04635762   0.761875329 189.9536 1.291496e-03 148
+## 150   3.04635762   0.459673943 189.9536 4.706508e-04 149
+## 151  -2.95364238  -0.445675516 189.9536 4.424385e-04 150
+## 152  11.04635762   1.673183393 189.9536 6.188356e-03 151
+## 153  -6.18699187  -0.935198481 217.1870 2.390491e-03 152
+## 154  12.81300813   1.945051998 217.1870 1.025251e-02 153
+## 155  -7.18699187  -1.086845476 217.1870 3.225688e-03 154
+## 156   0.81300813   0.122734782 217.1870 4.127793e-05 155
+## 157  -2.18699187  -0.330202454 217.1870 2.986912e-04 156
+## 158  -7.18699187  -1.086845476 217.1870 3.225688e-03 157
+## 159  -6.18699187  -0.935198481 217.1870 2.390491e-03 158
+## 160   1.81300813   0.273722799 217.1870 2.052710e-04 159
+## 161  -8.18699187  -1.238713865 217.1870 4.185784e-03 160
+## 162  -2.18699187  -0.330202454 217.1870 2.986912e-04 161
+## 163  -3.18699187  -0.481274446 217.1870 6.342931e-04 162
+## 164  -1.18699187  -0.179197301 217.1870 8.798803e-05 163
+## 165  -3.18699187  -0.481274446 217.1870 6.342931e-04 164
+## 166  -4.18699187  -0.632443927 217.1870 1.094794e-03 165
+## 167  -7.18699187  -1.086845476 217.1870 3.225688e-03 166
+## 168  -0.18699187  -0.028228404 217.1870 2.183602e-06 167
+## 169  -7.18699187  -1.086845476 217.1870 3.225688e-03 168
+## 170   3.81300813   0.575895638 217.1870 9.079534e-04 169
+## 171  -8.18699187  -1.238713865 217.1870 4.185784e-03 170
+## 172   4.81300813   0.727141791 217.1870 1.446643e-03 171
+## 173   0.81300813   0.122734782 217.1870 4.127793e-05 172
+## 174  -2.18699187  -0.330202454 217.1870 2.986912e-04 173
+## 175  -4.18699187  -0.632443927 217.1870 1.094794e-03 174
+## 176  -2.18699187  -0.330202454 217.1870 2.986912e-04 175
+## 177  -2.18699187  -0.330202454 217.1870 2.986912e-04 176
+## 178  -2.18699187  -0.330202454 217.1870 2.986912e-04 177
+## 179  -1.18699187  -0.179197301 217.1870 8.798803e-05 178
+## 180  -2.18699187  -0.330202454 217.1870 2.986912e-04 179
+## 181  -7.18699187  -1.086845476 217.1870 3.225688e-03 180
+## 182   2.81300813   0.424766211 217.1870 4.941628e-04 181
+## 183   4.81300813   0.727141791 217.1870 1.446643e-03 182
+## 184  -8.18699187  -1.238713865 217.1870 4.185784e-03 183
+## 185 -10.18699187  -1.543240931 217.1870 6.480672e-03 184
+## 186  12.81300813   1.945051998 217.1870 1.025251e-02 185
+## 187   2.81300813   0.424766211 217.1870 4.941628e-04 186
+## 188   2.81300813   0.424766211 217.1870 4.941628e-04 187
+## 189  -4.18699187  -0.632443927 217.1870 1.094794e-03 188
+## 190   1.81300813   0.273722799 217.1870 2.052710e-04 189
+## 191  -9.18699187  -1.390835109 217.1870 5.270778e-03 190
+## 192  -9.18699187  -1.390835109 217.1870 5.270778e-03 191
+## 193  -9.18699187  -1.390835109 217.1870 5.270778e-03 192
+## 194   7.81300813   1.181889650 217.1870 3.812103e-03 193
+## 195  -7.18699187  -1.086845476 217.1870 3.225688e-03 194
+## 196  -1.18699187  -0.179197301 217.1870 8.798803e-05 195
+## 197   4.81300813   0.727141791 217.1870 1.446643e-03 196
+## 198  -0.18699187  -0.028228404 217.1870 2.183602e-06 197
+## 199  -7.18699187  -1.086845476 217.1870 3.225688e-03 198
+## 200   7.81300813   1.181889650 217.1870 3.812103e-03 199
+## 201  -4.18699187  -0.632443927 217.1870 1.094794e-03 200
+## 202  -2.18699187  -0.330202454 217.1870 2.986912e-04 201
+## 203  -7.18699187  -1.086845476 217.1870 3.225688e-03 202
+## 204   2.81300813   0.424766211 217.1870 4.941628e-04 203
+## 205  -7.18699187  -1.086845476 217.1870 3.225688e-03 204
+## 206   7.81300813   1.181889650 217.1870 3.812103e-03 205
+## 207  -0.18699187  -0.028228404 217.1870 2.183602e-06 206
+## 208   2.81300813   0.424766211 217.1870 4.941628e-04 207
+## 209  -9.18699187  -1.390835109 217.1870 5.270778e-03 208
+## 210   2.81300813   0.424766211 217.1870 4.941628e-04 209
+## 211  -9.18699187  -1.390835109 217.1870 5.270778e-03 210
+## 212   6.81300813   1.030107729 217.1870 2.898718e-03 211
+## 213  -9.18699187  -1.390835109 217.1870 5.270778e-03 212
+## 214   3.81300813   0.575895638 217.1870 9.079534e-04 213
+## 215  -3.18699187  -0.481274446 217.1870 6.342931e-04 214
+## 216  13.81300813   2.098760725 217.1870 1.191529e-02 215
+## 217   1.81300813   0.273722799 217.1870 2.052710e-04 216
+## 218  12.81300813   1.945051998 217.1870 1.025251e-02 217
+## 219  -3.18699187  -0.481274446 217.1870 6.342931e-04 218
+## 220  11.81300813   1.791745587 217.1870 8.714633e-03 219
+## 221   2.81300813   0.424766211 217.1870 4.941628e-04 220
+## 222   5.81300813   0.878535496 217.1870 2.110231e-03 221
+## 223  -1.18699187  -0.179197301 217.1870 8.798803e-05 222
+## 224   3.81300813   0.575895638 217.1870 9.079534e-04 223
+## 225   3.81300813   0.575895638 217.1870 9.079534e-04 224
+## 226  -0.18699187  -0.028228404 217.1870 2.183602e-06 225
+## 227  -1.18699187  -0.179197301 217.1870 8.798803e-05 226
+## 228  12.81300813   1.945051998 217.1870 1.025251e-02 227
+## 229  -8.18699187  -1.238713865 217.1870 4.185784e-03 228
+## 230   2.81300813   0.424766211 217.1870 4.941628e-04 229
+## 231  -2.18699187  -0.330202454 217.1870 2.986912e-04 230
+## 232   5.81300813   0.878535496 217.1870 2.110231e-03 231
+## 233  -5.18699187  -0.783741645 217.1870 1.680193e-03 232
+## 234   3.81300813   0.575895638 217.1870 9.079534e-04 233
+## 235  -5.18699187  -0.783741645 217.1870 1.680193e-03 234
+## 236   6.81300813   1.030107729 217.1870 2.898718e-03 235
+## 237  -5.18699187  -0.783741645 217.1870 1.680193e-03 236
+## 238  10.81300813   1.638808541 217.1870 7.301652e-03 237
+## 239   0.81300813   0.122734782 217.1870 4.127793e-05 238
+## 240   0.81300813   0.122734782 217.1870 4.127793e-05 239
+## 241  -5.18699187  -0.783741645 217.1870 1.680193e-03 240
+## 242  12.81300813   1.945051998 217.1870 1.025251e-02 241
+## 243   0.81300813   0.122734782 217.1870 4.127793e-05 242
+## 244  10.81300813   1.638808541 217.1870 7.301652e-03 243
+## 245  -5.18699187  -0.783741645 217.1870 1.680193e-03 244
+## 246   6.81300813   1.030107729 217.1870 2.898718e-03 245
+## 247  -3.18699187  -0.481274446 217.1870 6.342931e-04 246
+## 248   8.81300813   1.333912631 217.1870 4.850388e-03 247
+## 249  -1.18699187  -0.179197301 217.1870 8.798803e-05 248
+## 250   4.81300813   0.727141791 217.1870 1.446643e-03 249
+## 251 -14.18699187  -2.156355425 217.1870 1.256923e-02 250
+## 252   7.81300813   1.181889650 217.1870 3.812103e-03 251
+## 253   1.81300813   0.273722799 217.1870 2.052710e-04 252
+## 254  10.81300813   1.638808541 217.1870 7.301652e-03 253
+## 255  -2.18699187  -0.330202454 217.1870 2.986912e-04 254
+## 256  10.81300813   1.638808541 217.1870 7.301652e-03 255
+## 257  -1.18699187  -0.179197301 217.1870 8.798803e-05 256
+## 258  -2.18699187  -0.330202454 217.1870 2.986912e-04 257
+## 259  -7.18699187  -1.086845476 217.1870 3.225688e-03 258
+## 260   1.81300813   0.273722799 217.1870 2.052710e-04 259
+## 261  -9.18699187  -1.390835109 217.1870 5.270778e-03 260
+## 262  -8.18699187  -1.238713865 217.1870 4.185784e-03 261
+## 263  -1.18699187  -0.179197301 217.1870 8.798803e-05 262
+## 264  11.81300813   1.791745587 217.1870 8.714633e-03 263
+## 265  -4.18699187  -0.632443927 217.1870 1.094794e-03 264
+## 266  12.81300813   1.945051998 217.1870 1.025251e-02 265
+## 267  -0.18699187  -0.028228404 217.1870 2.183602e-06 266
+## 268  12.81300813   1.945051998 217.1870 1.025251e-02 267
+## 269  -0.18699187  -0.028228404 217.1870 2.183602e-06 268
+## 270   4.81300813   0.727141791 217.1870 1.446643e-03 269
+## 271  -3.18699187  -0.481274446 217.1870 6.342931e-04 270
+## 273  -2.18699187  -0.330202454 217.1870 2.986912e-04 271
+## 274   4.81300813   0.727141791 217.1870 1.446643e-03 272
+## 275  -5.18699187  -0.783741645 217.1870 1.680193e-03 273
+## 276  -4.18699187  -0.632443927 217.1870 1.094794e-03 274
+## 277  -3.82352941  -0.579412040 195.8235 1.673520e-03 275
+## 278   0.17647059   0.026728852 195.8235 3.564894e-06 276
+## 279  -2.82352941  -0.427776924 195.8235 9.126129e-04 277
+## 280  -7.82352941  -1.187446937 195.8235 7.006601e-03 278
+## 281   1.17647059   0.178200525 195.8235 1.584397e-04 279
+## 282   2.17647059   0.329708494 195.8235 5.422600e-04 280
+## 283 -17.82352941  -2.729194710 195.8235 3.636548e-02 281
+## 284   1.17647059   0.178200525 195.8235 1.584397e-04 282
+## 285  -0.82352941  -0.124737379 195.8235 7.763547e-05 283
+## 286   2.17647059   0.329708494 195.8235 5.422600e-04 284
+## 287  -2.82352941  -0.427776924 195.8235 9.126129e-04 285
+## 288  -1.82352941  -0.276229014 195.8235 3.806515e-04 286
+## 289 -10.82352941  -1.645924475 195.8235 1.341034e-02 287
+## 290   5.17647059   0.784759436 195.8235 3.067393e-03 288
+## 291  -5.82352941  -0.883068084 195.8235 3.882170e-03 289
+## 292   5.17647059   0.784759436 195.8235 3.067393e-03 290
+## 293   1.17647059   0.178200525 195.8235 1.584397e-04 291
+## 294 -14.82352941  -2.262153692 195.8235 2.515389e-02 292
+## 295  -5.82352941  -0.883068084 195.8235 3.882170e-03 293
+## 296  -0.82352941  -0.124737379 195.8235 7.763547e-05 294
+## 297 -14.82352941  -2.262153692 195.8235 2.515389e-02 295
+## 298  -4.82352941  -0.731165380 195.8235 2.663372e-03 296
+## 299  -8.82352941  -1.339986260 195.8235 8.912235e-03 297
+## 300  -2.82352941  -0.427776924 195.8235 9.126129e-04 298
+## 301  -0.82352941  -0.124737379 195.8235 7.763547e-05 299
+## 302   1.17647059   0.178200525 195.8235 1.584397e-04 300
+## 303   4.17647059   0.632956942 195.8235 1.996737e-03 301
+## 304   4.17647059   0.632956942 195.8235 1.996737e-03 302
+## 305  -4.82352941  -0.731165380 195.8235 2.663372e-03 303
+## 306   9.17647059   1.393887858 195.8235 9.639473e-03 304
+## 307  -8.82352941  -1.339986260 195.8235 8.912235e-03 305
+## 308   5.17647059   0.784759436 195.8235 3.067393e-03 306
+## 309  -8.82352941  -1.339986260 195.8235 8.912235e-03 307
+## 310   7.17647059   1.088876944 195.8235 5.895542e-03 308
+## 311  -0.82352941  -0.124737379 195.8235 7.763547e-05 309
+## 312   3.17647059   0.481283647 195.8235 1.155026e-03 310
+## 313  -0.82352941  -0.124737379 195.8235 7.763547e-05 311
+## 314  14.17647059   2.162011704 195.8235 2.300585e-02 312
+## 315  -3.82352941  -0.579412040 195.8235 1.673520e-03 313
+## 316   9.17647059   1.393887858 195.8235 9.639473e-03 314
+## 317  14.17647059   2.162011704 195.8235 2.300585e-02 315
+## 318  -8.82352941  -1.339986260 195.8235 8.912235e-03 316
+## 319   0.17647059   0.026728852 195.8235 3.564894e-06 317
+## 320   0.17647059   0.026728852 195.8235 3.564894e-06 318
+## 321   0.17647059   0.026728852 195.8235 3.564894e-06 319
+## 322   5.17647059   0.784759436 195.8235 3.067393e-03 320
+## 323  -5.82352941  -0.883068084 195.8235 3.882170e-03 321
+## 324  16.17647059   2.472194735 195.8235 2.995501e-02 322
+## 325  -8.82352941  -1.339986260 195.8235 8.912235e-03 323
+## 326   2.17647059   0.329708494 195.8235 5.422600e-04 324
+## 327   3.17647059   0.481283647 195.8235 1.155026e-03 325
+## 328   5.17647059   0.784759436 195.8235 3.067393e-03 326
+## 329  -2.82352941  -0.427776924 195.8235 9.126129e-04 327
+## 330   7.17647059   1.088876944 195.8235 5.895542e-03 328
+## 331  -8.82352941  -1.339986260 195.8235 8.912235e-03 329
+## 332   1.17647059   0.178200525 195.8235 1.584397e-04 330
+## 333  -4.82352941  -0.731165380 195.8235 2.663372e-03 331
+## 334   7.17647059   1.088876944 195.8235 5.895542e-03 332
+## 335   6.17647059   0.936722318 195.8235 4.366995e-03 333
+## 336  -1.82352941  -0.276229014 195.8235 3.806515e-04 334
+## 337  10.17647059   1.546807973 195.8235 1.185486e-02 335
+## 338  -6.82352941  -1.035151443 195.8235 5.329913e-03 336
+## 339  -0.82352941  -0.124737379 195.8235 7.763547e-05 337
+## 340  11.17647059   1.700047551 195.8235 1.429919e-02 338
+## 341   6.17647059   0.936722318 195.8235 4.366995e-03 339
+## 342  -2.82352941  -0.427776924 195.8235 9.126129e-04 340
+## 343  14.17647059   2.162011704 195.8235 2.300585e-02 341
+## 344   2.17647059   0.329708494 195.8235 5.422600e-04 342
+```
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Normality
+
+
+```r
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-90-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+![:box 25%, 75%, 30%](Great)
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Heteroscedasticity
+
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-91-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+![:box 25%, 75%, 30%](Not bad)
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Influence (Cook's d)
+
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-92-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+![:box 15%, 75%, 25%](Some interesting observations, but nothing crazy)
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+4\. Interpret the **summary table** 
+
+.small[
+
+```r
+summary(m)
+```
+
+```
+## 
+## Call:
+## lm(formula = flipper_length_mm ~ species, data = penguins)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -17.9536  -4.8235   0.0464   4.8130  20.0464 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+*## (Intercept)      189.9536     0.5405 351.454  &lt; 2e-16 ***
+*## speciesChinstrap   5.8699     0.9699   6.052 3.79e-09 ***
+*## speciesGentoo     27.2333     0.8067  33.760  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 6.642 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.7782,	Adjusted R-squared:  0.7769 
+## F-statistic: 594.8 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+]
+
+![:box 25%, 20%, 40%](Adelie penguins have an average flipper length of 189.95mm)
+
+![:box 25%, 40%, 40%](Chinstrap flippers are on average 5.87mm longer than Adelie penguins (P &lt; 0.0001&amp;rpar;)
+
+![:box 25%, 60%, 40%](Gentoo flippers are on average 27.23mm longer than Adelie penguins (P &lt; 0.0001&amp;rpar;)
+
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+5\. Interpret the **ANOVA Table**
+
+.small[
+
+```r
+anova(m)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: flipper_length_mm
+##            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+*## species     2  52473 26236.6   594.8 &lt; 2.2e-16 ***
+## Residuals 339  14953    44.1                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+
+![:box 50%, 75%, 60%](Flipper length differs significantly (P &lt; 0.0001&amp;rpar; among species&lt;br&gt;&lt;span class = "medium"&gt;But we don't know exactly how&lt;/span&gt;)
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+6\. Create an ANOVA model of flipper length and species and sex
+
+
+```r
+m &lt;- lm(flipper_length_mm ~ species + sex, data = penguins)
+```
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics
+
+
+```r
+d &lt;- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d &lt;- mutate(d, obs = 1:n())
+d
+```
+
+```
+##       residuals std_residuals   fitted        cooks obs
+## 1   -12.5278243   -2.21168802 193.5278 1.202679e-02   1
+## 2    -0.6776552   -0.11875498 186.6777 3.518972e-05   2
+## 3     8.3223448    1.46316112 186.6777 5.307497e-03   3
+## 5     6.3223448    1.11000797 186.6777 3.063054e-03   4
+## 6    -3.5278243   -0.61857713 193.5278 9.537010e-04   5
+## 7    -5.6776552   -0.99645826 186.6777 2.470224e-03   6
+## 8     1.4721757    0.25801055 193.5278 1.660801e-04   7
+## 13   -4.6776552   -0.82055414 186.6777 1.676698e-03   8
+## 14   -2.5278243   -0.44310900 193.5278 4.896572e-04   9
+## 15    4.4721757    0.78443976 193.5278 1.532626e-03  10
+## 16   -1.6776552   -0.29403137 186.6777 2.156770e-04  11
+## 17    8.3223448    1.46316112 186.6777 5.307497e-03  12
+## 18    3.4721757    0.60880846 193.5278 9.238506e-04  13
+## 19   -2.6776552   -0.46939040 186.6777 5.494240e-04  14
+## 20    0.4721757    0.08274503 193.5278 1.708463e-05  15
+## 21  -12.6776552   -2.23854117 186.6777 1.231619e-02  16
+## 22  -13.5278243   -2.39119205 193.5278 1.402343e-02  17
+## 23    2.3223448    0.40707096 186.6777 4.132870e-04  18
+## 24   -8.5278243   -1.49953135 193.5278 5.572818e-03  19
+## 25  -13.5278243   -2.39119205 193.5278 1.402343e-02  20
+## 26    0.3223448    0.05648805 186.6777 7.962323e-06  21
+## 27  -10.5278243   -1.85454541 193.5278 8.493283e-03  22
+## 28    0.3223448    0.05648805 186.6777 7.962323e-06  23
+## 29  -14.6776552   -2.59845420 186.6777 1.650866e-02  24
+## 30  -13.5278243   -2.39119205 193.5278 1.402343e-02  25
+## 31   -8.6776552   -1.52606303 186.6777 5.770363e-03  26
+## 32  -15.5278243   -2.75234251 193.5278 1.847649e-02  27
+## 33    1.3223448    0.23174694 186.6777 1.339948e-04  28
+## 34   -9.5278243   -1.67679881 193.5278 6.956421e-03  29
+## 35    8.3223448    1.46316112 186.6777 5.307497e-03  30
+## 36    2.4721757    0.43334857 193.5278 4.683355e-04  31
+## 37   -3.5278243   -0.61857713 193.5278 9.537010e-04  32
+## 38   -6.6776552   -1.17264400 186.6777 3.417011e-03  33
+## 39   -5.6776552   -0.99645826 186.6777 2.470224e-03  34
+## 40   -9.5278243   -1.67679881 193.5278 6.956421e-03  35
+## 41   -4.6776552   -0.82055414 186.6777 1.676698e-03  36
+## 42    1.4721757    0.25801055 193.5278 1.660801e-04  37
+## 43   -0.6776552   -0.11875498 186.6777 3.518972e-05  38
+## 44    2.4721757    0.43334857 193.5278 4.683355e-04  39
+## 45   -1.6776552   -0.29403137 186.6777 2.156770e-04  40
+## 46   -3.5278243   -0.61857713 193.5278 9.537010e-04  41
+## 47  -11.5278243   -2.03282396 193.5278 1.018341e-02  42
+## 49    3.3223448    0.58250944 186.6777 8.458391e-04  43
+## 50   -2.5278243   -0.44310900 193.5278 4.896572e-04  44
+## 51   -0.6776552   -0.11875498 186.6777 3.518972e-05  45
+## 52   -5.5278243   -0.97008568 193.5278 2.341568e-03  46
+## 53    3.3223448    0.58250944 186.6777 8.458391e-04  47
+## 54    6.4721757    1.13641600 193.5278 3.209955e-03  48
+## 55    0.3223448    0.05648805 186.6777 7.962323e-06  49
+## 56   -2.5278243   -0.44310900 193.5278 4.896572e-04  50
+## 57   -0.6776552   -0.11875498 186.6777 3.518972e-05  51
+## 58   -0.5278243   -0.09249724 193.5278 2.134898e-05  52
+## 59   -5.6776552   -0.99645826 186.6777 2.470224e-03  53
+## 60    0.4721757    0.08274503 193.5278 1.708463e-05  54
+## 61   -1.6776552   -0.29403137 186.6777 2.156770e-04  55
+## 62    1.4721757    0.25801055 193.5278 1.660801e-04  56
+## 63   -1.6776552   -0.29403137 186.6777 2.156770e-04  57
+## 64   -1.5278243   -0.26776549 193.5278 1.788732e-04  58
+## 65   -2.6776552   -0.46939040 186.6777 5.494240e-04  59
+## 66   -1.5278243   -0.26776549 193.5278 1.788732e-04  60
+## 67    8.3223448    1.46316112 186.6777 5.307497e-03  61
+## 68   -5.5278243   -0.97008568 193.5278 2.341568e-03  62
+## 69    3.3223448    0.58250944 186.6777 8.458391e-04  63
+## 70    4.4721757    0.78443976 193.5278 1.532626e-03  64
+## 71    3.3223448    0.58250944 186.6777 8.458391e-04  65
+## 72   -3.5278243   -0.61857713 193.5278 9.537010e-04  66
+## 73    9.3223448    1.64033660 186.6777 6.659608e-03  67
+## 74    3.4721757    0.60880846 193.5278 9.238506e-04  68
+## 75    3.3223448    0.58250944 186.6777 8.458391e-04  69
+## 76    1.4721757    0.25801055 193.5278 1.660801e-04  70
+## 77    4.3223448    0.75811190 186.6777 1.431651e-03  71
+## 78   -9.5278243   -1.67679881 193.5278 6.956421e-03  72
+## 79    0.3223448    0.05648805 186.6777 7.962323e-06  73
+## 80    1.4721757    0.25801055 193.5278 1.660801e-04  74
+## 81    2.3223448    0.40707096 186.6777 4.132870e-04  75
+## 82    2.4721757    0.43334857 193.5278 4.683355e-04  76
+## 83    0.3223448    0.05648805 186.6777 7.962323e-06  77
+## 84   -0.5278243   -0.09249724 193.5278 2.134898e-05  78
+## 85    4.3223448    0.75811190 186.6777 1.431651e-03  79
+## 86    0.4721757    0.08274503 193.5278 1.708463e-05  80
+## 87   -3.5278243   -0.61857713 193.5278 9.537010e-04  81
+## 88    2.3223448    0.40707096 186.6777 4.132870e-04  82
+## 89   -4.5278243   -0.79421942 193.5278 1.571005e-03  83
+## 90    3.3223448    0.58250944 186.6777 8.458391e-04  84
+## 91   15.3223448    2.71509662 186.6777 1.799073e-02  85
+## 92   11.4721757    2.02288813 193.5278 1.008533e-02  86
+## 93   -1.6776552   -0.29403137 186.6777 2.156770e-04  87
+## 94   -7.5278243   -1.32269092 193.5278 4.342475e-03  88
+## 95    0.3223448    0.05648805 186.6777 7.962323e-06  89
+## 96   14.4721757    2.56134434 193.5278 1.604967e-02  90
+## 97    3.3223448    0.58250944 186.6777 8.458391e-04  91
+## 98    2.4721757    0.43334857 193.5278 4.683355e-04  92
+## 99   -8.6776552   -1.52606303 186.6777 5.770363e-03  93
+## 100  -1.5278243   -0.26776549 193.5278 1.788732e-04  94
+## 101   5.3223448    0.93392806 186.6777 2.170723e-03  95
+## 102   9.4721757    1.66692203 193.5278 6.875398e-03  96
+## 103  -3.6776552   -0.64488146 186.6777 1.036431e-03  97
+## 104  -3.5278243   -0.61857713 193.5278 9.537010e-04  98
+## 105   6.3223448    1.11000797 186.6777 3.063054e-03  99
+## 106  -9.5278243   -1.67679881 193.5278 6.956421e-03 100
+## 107  12.3223448    2.17488469 186.6777 1.163550e-02 101
+## 108  -3.5278243   -0.61857713 193.5278 9.537010e-04 102
+## 109  -5.6776552   -0.99645826 186.6777 2.470224e-03 103
+## 110   3.4721757    0.60880846 193.5278 9.238506e-04 104
+## 111  11.3223448    1.99614536 186.6777 9.823610e-03 105
+## 112  -2.5278243   -0.44310900 193.5278 4.896572e-04 106
+## 113   6.3223448    1.11000797 186.6777 3.063054e-03 107
+## 114   3.4721757    0.60880846 193.5278 9.238506e-04 108
+## 115   4.3223448    0.75811190 186.6777 1.431651e-03 109
+## 116   2.4721757    0.43334857 193.5278 4.683355e-04 110
+## 117   1.3223448    0.23174694 186.6777 1.339948e-04 111
+## 118   5.4721757    0.96029224 193.5278 2.294660e-03 112
+## 119   2.3223448    0.40707096 186.6777 4.132870e-04 113
+## 120  -4.5278243   -0.79421942 193.5278 1.571005e-03 114
+## 121   0.3223448    0.05648805 186.6777 7.962323e-06 115
+## 122   4.4721757    0.78443976 193.5278 1.532626e-03 116
+## 123 -10.6776552   -1.88122187 186.6777 8.736755e-03 117
+## 124   8.4721757    1.48967969 193.5278 5.500324e-03 118
+## 125  -0.6776552   -0.11875498 186.6777 3.518972e-05 119
+## 126   5.4721757    0.96029224 193.5278 2.294660e-03 120
+## 127   4.3223448    0.75811190 186.6777 1.431651e-03 121
+## 128   1.4721757    0.25801055 193.5278 1.660801e-04 122
+## 129   4.3223448    0.75811190 186.6777 1.431651e-03 123
+## 130  16.4721757    2.92396594 193.5278 2.079219e-02 124
+## 131   3.3223448    0.58250944 186.6777 8.458391e-04 125
+## 132   3.4721757    0.60880846 193.5278 9.238506e-04 126
+## 133   6.3223448    1.11000797 186.6777 3.063054e-03 127
+## 134   5.4721757    0.96029224 193.5278 2.294660e-03 128
+## 135   0.3223448    0.05648805 186.6777 7.962323e-06 129
+## 136  -3.5278243   -0.61857713 193.5278 9.537010e-04 130
+## 137   4.3223448    0.75811190 186.6777 1.431651e-03 131
+## 138   6.4721757    1.13641600 193.5278 3.209955e-03 132
+## 139  -1.6776552   -0.29403137 186.6777 2.156770e-04 133
+## 140  -0.5278243   -0.09249724 193.5278 2.134898e-05 134
+## 141   6.3223448    1.11000797 186.6777 3.063054e-03 135
+## 142  -6.5278243   -1.14622602 193.5278 3.265392e-03 136
+## 143   1.3223448    0.23174694 186.6777 1.339948e-04 137
+## 144  -3.5278243   -0.61857713 193.5278 9.537010e-04 138
+## 145   5.3223448    0.93392806 186.6777 2.170723e-03 139
+## 146  -8.5278243   -1.49953135 193.5278 5.572818e-03 140
+## 147  -3.5278243   -0.61857713 193.5278 9.537010e-04 141
+## 148  -2.6776552   -0.46939040 186.6777 5.494240e-04 142
+## 149   8.3223448    1.46316112 186.6777 5.307497e-03 143
+## 150  -0.5278243   -0.09249724 193.5278 2.134898e-05 144
+## 151   0.3223448    0.05648805 186.6777 7.962323e-06 145
+## 152   7.4721757    1.31286151 193.5278 4.278510e-03 146
+## 153  -2.7238629   -0.47790867 213.7239 6.693794e-04 147
+## 154   9.4259680    1.65990955 220.5740 7.801122e-03 148
+## 155  -3.7238629   -0.65355898 213.7239 1.251092e-03 149
+## 156  -2.5740320   -0.45153442 220.5740 5.817455e-04 150
+## 157  -5.5740320   -0.97891486 220.5740 2.727998e-03 151
+## 158  -3.7238629   -0.65355898 213.7239 1.251092e-03 152
+## 159  -2.7238629   -0.47790867 213.7239 6.693794e-04 153
+## 160  -1.5740320   -0.27606159 220.5740 2.175366e-04 154
+## 161  -4.7238629   -0.82939369 213.7239 2.013244e-03 155
+## 162  -5.5740320   -0.97891486 220.5740 2.727998e-03 156
+## 163   0.2761371    0.04843227 213.7239 6.879414e-06 157
+## 164  -4.5740320   -0.80291126 220.5740 1.836976e-03 158
+## 165   0.2761371    0.04843227 213.7239 6.879414e-06 159
+## 166  -7.5740320   -1.33180365 220.5740 5.036855e-03 160
+## 167  -3.7238629   -0.65355898 213.7239 1.251092e-03 161
+## 168  -3.5740320   -0.62713442 220.5740 1.121559e-03 162
+## 169  -3.7238629   -0.65355898 213.7239 1.251092e-03 163
+## 170   0.4259680    0.07470035 220.5740 1.593159e-05 164
+## 171  -4.7238629   -0.82939369 213.7239 2.013244e-03 165
+## 172   1.4259680    0.25008818 220.5740 1.785355e-04 166
+## 173  -2.5740320   -0.45153442 220.5740 5.817455e-04 167
+## 174   1.2761371    0.22384068 213.7239 1.469253e-04 168
+## 175  -0.7238629   -0.12696251 213.7239 4.727315e-05 169
+## 176  -5.5740320   -0.97891486 220.5740 2.727998e-03 170
+## 177   1.2761371    0.22384068 213.7239 1.469253e-04 171
+## 178  -5.5740320   -0.97891486 220.5740 2.727998e-03 172
+## 180  -5.5740320   -0.97891486 220.5740 2.727998e-03 173
+## 181  -3.7238629   -0.65355898 213.7239 1.251092e-03 174
+## 182  -0.5740320   -0.10066646 220.5740 2.893193e-05 175
+## 183   1.4259680    0.25008818 220.5740 1.785355e-04 176
+## 184  -4.7238629   -0.82939369 213.7239 2.013244e-03 177
+## 185  -6.7238629   -1.18181651 213.7239 4.078867e-03 178
+## 186   9.4259680    1.65990955 220.5740 7.801122e-03 179
+## 187   6.2761371    1.10281996 213.7239 3.553749e-03 180
+## 188  -0.5740320   -0.10066646 220.5740 2.893193e-05 181
+## 189  -0.7238629   -0.12696251 213.7239 4.727315e-05 182
+## 190  -1.5740320   -0.27606159 220.5740 2.175366e-04 183
+## 191  -5.7238629   -1.00546276 213.7239 2.955836e-03 184
+## 192 -12.5740320   -2.22156785 220.5740 1.388207e-02 185
+## 193  -5.7238629   -1.00546276 213.7239 2.955836e-03 186
+## 194   4.4259680    0.77687195 220.5740 1.719973e-03 187
+## 195  -3.7238629   -0.65355898 213.7239 1.251092e-03 188
+## 196  -4.5740320   -0.80291126 220.5740 1.836976e-03 189
+## 197   1.4259680    0.25008818 220.5740 1.785355e-04 190
+## 198   3.2761371    0.57489598 213.7239 9.683359e-04 191
+## 199  -3.7238629   -0.65355898 213.7239 1.251092e-03 192
+## 200   4.4259680    0.77687195 220.5740 1.719973e-03 193
+## 201  -0.7238629   -0.12696251 213.7239 4.727315e-05 194
+## 202  -5.5740320   -0.97891486 220.5740 2.727998e-03 195
+## 203  -3.7238629   -0.65355898 213.7239 1.251092e-03 196
+## 204  -0.5740320   -0.10066646 220.5740 2.893193e-05 197
+## 205  -3.7238629   -0.65355898 213.7239 1.251092e-03 198
+## 206   4.4259680    0.77687195 220.5740 1.719973e-03 199
+## 207   3.2761371    0.57489598 213.7239 9.683359e-04 200
+## 208  -0.5740320   -0.10066646 220.5740 2.893193e-05 201
+## 209  -5.7238629   -1.00546276 213.7239 2.955836e-03 202
+## 210  -0.5740320   -0.10066646 220.5740 2.893193e-05 203
+## 211  -5.7238629   -1.00546276 213.7239 2.955836e-03 204
+## 212   3.4259680    0.60112443 220.5740 1.030556e-03 205
+## 213  -5.7238629   -1.00546276 213.7239 2.955836e-03 206
+## 214   0.4259680    0.07470035 220.5740 1.593159e-05 207
+## 215   0.2761371    0.04843227 213.7239 6.879414e-06 208
+## 216  10.4259680    1.83773464 220.5740 9.544164e-03 209
+## 217   5.2761371    0.92659991 213.7239 2.511505e-03 210
+## 218   9.4259680    1.65990955 220.5740 7.801122e-03 211
+## 220   8.4259680    1.48255929 220.5740 6.233683e-03 212
+## 221   6.2761371    1.10281996 213.7239 3.553749e-03 213
+## 222   2.4259680    0.42554638 220.5740 5.167438e-04 214
+## 223   2.2761371    0.39931210 213.7239 4.674108e-04 215
+## 224   0.4259680    0.07470035 220.5740 1.593159e-05 216
+## 225   0.4259680    0.07470035 220.5740 1.593159e-05 217
+## 226   3.2761371    0.57489598 213.7239 9.683359e-04 218
+## 227   2.2761371    0.39931210 213.7239 4.674108e-04 219
+## 228   9.4259680    1.65990955 220.5740 7.801122e-03 220
+## 229  -4.7238629   -0.82939369 213.7239 2.013244e-03 221
+## 230  -0.5740320   -0.10066646 220.5740 2.893193e-05 222
+## 231   1.2761371    0.22384068 213.7239 1.469253e-04 223
+## 232   2.4259680    0.42554638 220.5740 5.167438e-04 224
+## 233  -1.7238629   -0.30239302 213.7239 2.681065e-04 225
+## 234   0.4259680    0.07470035 220.5740 1.593159e-05 226
+## 235  -1.7238629   -0.30239302 213.7239 2.681065e-04 227
+## 236   3.4259680    0.60112443 220.5740 1.030556e-03 228
+## 237  -1.7238629   -0.30239302 213.7239 2.681065e-04 229
+## 238   7.4259680    1.30563169 220.5740 4.841849e-03 230
+## 239   4.2761371    0.75064197 213.7239 1.649701e-03 231
+## 240  -2.5740320   -0.45153442 220.5740 5.817455e-04 232
+## 241  -1.7238629   -0.30239302 213.7239 2.681065e-04 233
+## 242   9.4259680    1.65990955 220.5740 7.801122e-03 234
+## 243   4.2761371    0.75064197 213.7239 1.649701e-03 235
+## 244   7.4259680    1.30563169 220.5740 4.841849e-03 236
+## 245  -1.7238629   -0.30239302 213.7239 2.681065e-04 237
+## 246   3.4259680    0.60112443 220.5740 1.030556e-03 238
+## 247   0.2761371    0.04843227 213.7239 6.879414e-06 239
+## 248   5.4259680    0.95283881 220.5740 2.584994e-03 240
+## 249  -4.5740320   -0.80291126 220.5740 1.836976e-03 241
+## 250   8.2761371    1.45624893 213.7239 6.179555e-03 242
+## 251 -10.7238629   -1.89110027 213.7239 1.037539e-02 243
+## 252   4.4259680    0.77687195 220.5740 1.719973e-03 244
+## 253   5.2761371    0.92659991 213.7239 2.511505e-03 245
+## 254   7.4259680    1.30563169 220.5740 4.841849e-03 246
+## 255   1.2761371    0.22384068 213.7239 1.469253e-04 247
+## 256   7.4259680    1.30563169 220.5740 4.841849e-03 248
+## 258  -5.5740320   -0.97891486 220.5740 2.727998e-03 249
+## 259  -3.7238629   -0.65355898 213.7239 1.251092e-03 250
+## 260  -1.5740320   -0.27606159 220.5740 2.175366e-04 251
+## 261  -5.7238629   -1.00546276 213.7239 2.955836e-03 252
+## 262 -11.5740320   -2.04254313 220.5740 1.176182e-02 253
+## 263   2.2761371    0.39931210 213.7239 4.674108e-04 254
+## 264   8.4259680    1.48255929 220.5740 6.233683e-03 255
+## 265  -0.7238629   -0.12696251 213.7239 4.727315e-05 256
+## 266   9.4259680    1.65990955 220.5740 7.801122e-03 257
+## 267   3.2761371    0.57489598 213.7239 9.683359e-04 258
+## 268   9.4259680    1.65990955 220.5740 7.801122e-03 259
+## 270   1.4259680    0.25008818 220.5740 1.785355e-04 260
+## 271   0.2761371    0.04843227 213.7239 6.879414e-06 261
+## 273   1.2761371    0.22384068 213.7239 1.469253e-04 262
+## 274   1.4259680    0.25008818 220.5740 1.785355e-04 263
+## 275  -1.7238629   -0.30239302 213.7239 2.681065e-04 264
+## 276  -7.5740320   -1.33180365 220.5740 5.036855e-03 265
+## 277  -0.3984449   -0.07010276 192.3984 2.221743e-05 266
+## 278  -3.2486140   -0.57184471 199.2486 1.476908e-03 267
+## 279  -6.2486140   -1.10140984 199.2486 5.464177e-03 268
+## 280  -4.3984449   -0.77456809 192.3984 2.707420e-03 269
+## 281  -2.2486140   -0.39571469 199.2486 7.075989e-04 270
+## 282   5.6015551    0.98699786 192.3984 4.391113e-03 271
+## 283 -14.3984449   -2.55840828 192.3984 2.901273e-02 272
+## 284  -2.2486140   -0.39571469 199.2486 7.075989e-04 273
+## 285   2.6015551    0.45786284 192.3984 9.471602e-04 274
+## 286  -1.2486140   -0.21969682 199.2486 2.181794e-04 275
+## 287   0.6015551    0.10583918 192.3984 5.064170e-05 276
+## 288  -5.2486140   -0.92464182 199.2486 3.855197e-03 277
+## 289  -7.3984449   -1.30505466 192.3984 7.660167e-03 278
+## 290   1.7513860    0.30818278 199.2486 4.292607e-04 279
+## 291  -2.3984449   -0.42209604 192.3984 8.050388e-04 280
+## 292   1.7513860    0.30818278 199.2486 4.292607e-04 281
+## 293  -2.2486140   -0.39571469 199.2486 7.075989e-04 282
+## 294 -11.3984449   -2.01784702 192.3984 1.818229e-02 283
+## 295  -2.3984449   -0.42209604 192.3984 8.050388e-04 284
+## 296  -4.2486140   -0.74813698 199.2486 2.526108e-03 285
+## 297 -11.3984449   -2.01784702 192.3984 1.818229e-02 286
+## 298  -8.2486140   -1.45593987 199.2486 9.521805e-03 287
+## 299  -5.3984449   -0.95110912 192.3984 4.078446e-03 288
+## 300  -6.2486140   -1.10140984 199.2486 5.464177e-03 289
+## 301   2.6015551    0.45786284 192.3984 9.471602e-04 290
+## 302  -2.2486140   -0.39571469 199.2486 7.075989e-04 291
+## 303   7.6015551    1.34107627 192.3984 8.086531e-03 292
+## 304   0.7513860    0.13220209 199.2486 7.901028e-05 293
+## 305  -1.3984449   -0.24606455 192.3984 2.736831e-04 294
+## 306   5.7513860    1.01347976 199.2486 4.629162e-03 295
+## 307  -5.3984449   -0.95110912 192.3984 4.078446e-03 296
+## 308   1.7513860    0.30818278 199.2486 4.292607e-04 297
+## 309  -5.3984449   -0.95110912 192.3984 4.078446e-03 298
+## 310   3.7513860    0.66045612 199.2486 1.969431e-03 299
+## 311  -4.2486140   -0.74813698 199.2486 2.526108e-03 300
+## 312   6.6015551    1.16387092 192.3984 6.098877e-03 301
+## 313   2.6015551    0.45786284 192.3984 9.471602e-04 302
+## 314  10.7513860    1.90199748 199.2486 1.617656e-02 303
+## 315  -0.3984449   -0.07010276 192.3984 2.221743e-05 304
+## 316   5.7513860    1.01347976 199.2486 4.629162e-03 305
+## 317  10.7513860    1.90199748 199.2486 1.617656e-02 306
+## 318  -5.3984449   -0.95110912 192.3984 4.078446e-03 307
+## 319  -3.2486140   -0.57184471 199.2486 1.476908e-03 308
+## 320   3.6015551    0.63404440 192.3984 1.815254e-03 309
+## 321   3.6015551    0.63404440 192.3984 1.815254e-03 310
+## 322   1.7513860    0.30818278 199.2486 4.292607e-04 311
+## 323  -2.3984449   -0.42209604 192.3984 8.050388e-04 312
+## 324  12.7513860    2.26088764 199.2486 2.275475e-02 313
+## 325 -12.2486140   -2.17043654 199.2486 2.099574e-02 314
+## 326   5.6015551    0.98699786 192.3984 4.391113e-03 315
+## 327   6.6015551    1.16387092 192.3984 6.098877e-03 316
+## 328   1.7513860    0.30818278 199.2486 4.292607e-04 317
+## 329   0.6015551    0.10583918 192.3984 5.064170e-05 318
+## 330   3.7513860    0.66045612 199.2486 1.969431e-03 319
+## 331  -5.3984449   -0.95110912 192.3984 4.078446e-03 320
+## 332  -2.2486140   -0.39571469 199.2486 7.075989e-04 321
+## 333  -1.3984449   -0.24606455 192.3984 2.736831e-04 322
+## 334   3.7513860    0.66045612 199.2486 1.969431e-03 323
+## 335   2.7513860    0.48425079 199.2486 1.059401e-03 324
+## 336   1.6015551    0.28181110 192.3984 3.589559e-04 325
+## 337   6.7513860    1.19039934 199.2486 6.378862e-03 326
+## 338  -3.3984449   -0.59824718 192.3984 1.616284e-03 327
+## 339   2.6015551    0.45786284 192.3984 9.471602e-04 328
+## 340   7.7513860    1.36765891 199.2486 8.408453e-03 329
+## 341   9.6015551    1.69669088 192.3984 1.290151e-02 330
+## 342  -6.2486140   -1.10140984 199.2486 5.464177e-03 331
+## 343  10.7513860    1.90199748 199.2486 1.617656e-02 332
+## 344   5.6015551    0.98699786 192.3984 4.391113e-03 333
+```
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics - Normality
+
+
+```r
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-97-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+![:box 25%, 75%, 30%](No problem)
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics - Heteroscedasticity
+
+
+```r
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-98-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+![:box 25%, 25%, 30%](Not bad, perhaps a smidge of funnelling but I wouldn't worry about it)
+
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics - Influence (Cook's d)
+
+
+```r
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+&lt;img src="4 Regressions and ANOVAs - answers_files/figure-html/unnamed-chunk-99-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+![:box 15%, 75%, 25%](Some interesting observations, but nothing crazy)
+
+---
+exclude: FALSE
+# Homework (Practice) Answers
+
+8\. Interpret the **ANOVA Table**
+
+.small[
+
+```r
+anova(m)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Response: flipper_length_mm
+##            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+*## species     2  50526 25262.9  770.50 &lt; 2.2e-16 ***
+*## sex         1   3906  3905.6  119.12 &lt; 2.2e-16 ***
+## Residuals 329  10787    32.8                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+
+![:box 50%, 75%, 90%](Flipper length differs significantly among species (P &lt; 0.0001&amp;rpar; and between sexes (P &lt; 0.0001&amp;rpar;&lt;br&gt;&lt;span class = "medium"&gt;We don't know exactly how they differ among species,&lt;br&gt;but looking at our boxplots, we know that male penguins have longer flippers than female penguins&lt;/span&gt;)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
