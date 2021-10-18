@@ -8,7 +8,7 @@ Answers to the mini-assignments will be available after the Lab :)
 
 ## Slides
 
-```{r, include = FALSE}
+```{r, include = FALSE, cache = FALSE}
 
 library(tidyverse)
 library(glue)
@@ -39,7 +39,7 @@ labs <- tribble(
          nice = file.path(nice))
 ```
 
-```{r getdata, include = FALSE}
+```{r getdata, include = FALSE, cache = FALSE}
 # MOVE SLIDES
 
 # MOVE BEFORE PDF
@@ -104,7 +104,7 @@ text <- slides %>%
 ```
 
 
-```{r, echo = FALSE, message = FALSE, results = "asis"}
+```{r, echo = FALSE, message = FALSE, results = "asis", cache = FALSE}
 
 #for(n in seq_along(text$title_nolinks)) cat(text$title_nolinks[n], "\n\n", sep = "")
 for(n in seq_along(text$title)) cat(text$title[n], "\n\n", sep = "")

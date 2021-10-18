@@ -3,6 +3,28 @@ remark.macros.box = function (right, top, width) {
   return '<div class = "box" style = "top: ' + top + '; right: ' + right + '; width: ' + width + ';">' + text + '</div>';
 };
 
+remark.macros.circle = function(right, top, width, height, align, colour, textcolour) {
+  var text = this;
+  if(typeof height == "undefined") var height = width;
+  if(typeof colour == "undefined") var colour = "cornflowerblue";
+  if(typeof textcolour == "undefined") var textcolour = "white";
+  if(typeof align == "undefined") var align = "middle";
+  var extra = "";
+  if(right == "center" & top != "center") {
+    right = "50%";
+    extra = " -webkit-transform: translate(50%, 0);";
+  } else if(right != "center" & top == "center") {
+    top = "50%";
+    extra = " -webkit-transform: translate(0, -50%); ";
+  } else if(right == "center" & top == "center") {
+    right = "50%";
+    top = "50%";
+    extra = " -webkit-transform: translate(50%, -50%); ";
+  }
+
+  return '<div style = "position: absolute; top: ' + top + '; right: ' + right + '; ' + extra + '"><div style = "border-radius: 50%; display: table-cell; text-align: center; vertical-align: ' + align + '; background-color: ' + colour + '; width: ' + width + '; height: ' + height + ';color: ' + textcolour + ';">' + text + '</div></div>';
+}
+
 remark.macros.label = function (right, top, width) {
   var text = this;
   return '<div class = label-container style = "position: absolute; top: ' + top + '; right: ' + right + '; width: ' + width + ';"><div class = "label"> ' + text + '</div></div>';
