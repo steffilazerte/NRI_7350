@@ -110,3 +110,7 @@ text <- slides %>%
 for(n in seq_along(text$title)) cat(text$title[n], "\n\n", sep = "")
 ```
 
+## Guest Lecture
+
+**rOpenSci and Beyond** ([html](https://steffilazerte.ca/Presentations/2021-11%20UofM%20-%20rOpenSci/2021-11_UofM_rOpenSci.html))
+
