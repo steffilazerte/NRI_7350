@@ -1,0 +1,1325 @@
+---
+title: NRI 7350 - Lab 2
+params: 
+  hide_answers: FALSE
+output:
+  xaringan::moon_reader:
+    css: [pres_styles.css, global_styles.css]
+    seal: false
+    self-contained: false
+    nature:
+      beforeInit: "macros.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+class: title-slide, nobar
+
+
+![:img center, bottom: 25px, 50%, ,](https://github.com/allisonhorst/stats-illustrations/raw/master/rstats-artwork/ggplot2_masterpiece.png)
+
+## NRI 7350
+# Plots and Loading Data
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+
+```{r setup, include = FALSE}
+
+hide_answers <- params$hide_answers
+
+knitr::opts_chunk$set(dpi = 150, fig.width = 8, out.width = "90%", fig.align = "center", fig.asp = 0.45, cache = TRUE, warning = FALSE)
+library(here)
+library(ggplot2)
+library(flair)
+library(palmerpenguins)
+library(dplyr)
+library(kableExtra)
+library(glue)
+
+options(width = 100)
+
+purple <- "#440154"
+teal <- "#277F8E"
+```
+
+---
+# Check-in
+
+- Everyone getting emails? (e.g., email about these slides?)
+- Everyone have access to these slides?  
+  https://steffilazerte.ca/NRI_7350/slides.html
+
+---
+class: split-60
+# Data for Assignments 2, 3 and 4
+
+> Assignment 2 (first R assignment!) comes next week
+
+### You'll need a data set with
+
+  - One *continuous* dependent variable (response)
+  - One *categorical* independent variable with **at least three categories** (explanatory)
+  - Two *continuous* independent variables (explanatory)
+
+![:spacer 15px]()
+
+.columnl[
+> Example:   
+> 
+> - response = `frequency`
+> - categorical explanatory = `site`
+> - continuous explanatory = `noise` and `mass`
+]
+
+.columnr[
+.medium[
+```{r, echo = FALSE}
+tribble(~`frequency`, ~site, ~noise, ~mass,
+        3500,       "rural",      45,     11.0,
+        3600,       "city",       65,     10.0,
+        3555,       "town",       55,     10.5,
+        3650,       "rural",      47,     9.5,
+        3300,       "town",       52,     10.0) %>%
+  kable() %>%
+  kable_styling(full_width = TRUE)
+```
+]]
+
+
+---
+# Data for Assignments 2, 3 and 4
+
+### Don't have enough variables? You can...
+
+- Create a categorical variable from continuous 
+  - `noise` in dB = `quiet`, `regular`, `noisy`
+  - `mass` in grams = `small`, `medium`, `large`
+  - `concentration` in g/mL = `low`, `medium`, `high`
+  - `amount` = `none`, `some`, `lots`
+- Create a dummy continuous variable
+  - `x` = random numbers between 1 and 250
+  
+  
+### Don't have any data? 
+
+- Ask your supervisor for something related to your project
+- Ask your fellow students
+- Email Nicky and I together with a brief description of your project and its design and we'll figure something out
+  
+  
+
+---
+class: section
+
+# Getting started (again)
+
+Open RStudio  
+Open your NRI project  
+Open a **new** script for today:  
+
+File > New File > R Script
+
+<br>
+
+Make sure to load `tidyverse` at the top:  
+`library(tidyverse)`
+
+
+---
+class: section
+
+# Creating Figures
+
+---
+class: nobar
+# `ggplot2`
+
+![:img center, bottom: 0, 78%, ,](https://github.com/allisonhorst/stats-illustrations/raw/master/rstats-artwork/ggplot2_masterpiece.png)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+---
+# Our data set: Palmer Penguins!
+
+
+![:img center, bottom: 0, 78%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/lter_penguins.png)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+![:img right: 1%, top: 1%, 10%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/logo.png)
+
+---
+# Our data set: Palmer Penguins!
+
+.small[
+```{r, cache = FALSE, R.options = list(width = 120)}
+library(palmerpenguins)
+penguins
+```
+]
+
+
+
+![:img right: 10%, bottom: 0, 25%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/lter_penguins.png)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+
+![:img right: 1%, top: 1%, 10%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/logo.png)
+
+
+--
+
+> Your turn! Run this code and look at the output in the console
+
+---
+# A basic plot
+
+```{r basic_plot, include = FALSE}
+library(palmerpenguins)
+library(tidyverse)
+
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm)) +
+    geom_point()
+```
+
+```{r, echo = FALSE}
+decorate("basic_plot", fig.width = 6, fig.asp = 0.5, out.width = "'70%'", message = FALSE)
+```
+
+
+---
+# Break it down
+```{r, echo = FALSE}
+decorate("basic_plot", eval = FALSE) %>%
+  flair_lines(1)
+```
+
+![:spacer 10px]()
+
+### `library(palmerpenguins)`
+- Load the `palmerguins` package so we have access to `penguins` data
+
+
+---
+# Break it down
+```{r, echo = FALSE}
+decorate("basic_plot", eval = FALSE) %>%
+  flair_lines(2)
+```
+
+![:spacer 10px]()
+
+
+### `library(tidyverse)`
+- Load the `tidyverse` package (which loads the `ggplot2` package)
+
+---
+# Break it down
+```{r, echo = FALSE}
+decorate("basic_plot", eval = FALSE) %>%
+  flair_lines(4)
+```
+
+![:spacer 10px]()
+
+### `ggplot()`
+- Set the attributes of your plot
+- **`data`** = Dataset
+- **`aes`** = Aesthetics (how the data are used)
+- Think of this as your plot defaults
+
+---
+
+# Break it down
+```{r, echo = FALSE}
+decorate("basic_plot", eval = FALSE) %>%
+  flair_lines(5)
+```
+
+![:spacer 10px]()
+
+### `geom_point()`
+
+- Choose a `geom` function to display the data
+- Always *added* to a `ggplot()` call with **+**
+
+> ggplots are essentially layered objects, starting with a call to `ggplot()`
+
+
+---
+class: split-50
+# Plots are layered
+
+.columnl[
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g))
+```
+]]
+
+.columnr[
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  geom_boxplot()         #<<
+```
+]]
+
+---
+class: split-50
+# Plots are layered
+
+.columnl[
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g))
+```
+]]
+
+.columnr[
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  geom_point()                                          #<<
+```
+]]
+
+---
+class:split-50
+# Plots are layered
+
+.columnl[
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g))
+```
+]]
+
+.columnr[
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  geom_violin()                                          #<<
+```
+]]
+
+---
+class: split-50
+# Plots are layered
+
+.columnl[
+### You can add multiple layers
+
+.small[
+```{r, fig.asp = 0.85, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  geom_boxplot()
+```
+]]
+
+---
+class: split-50
+# Plots are layered
+
+.columnl[
+### You can add multiple layers
+
+.small[
+```{r, fig.asp = 0.8, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  geom_boxplot() + 
+  geom_point(size = 2, colour = "red") #<<
+```
+]]
+
+--
+
+.columnr[
+
+
+### Order matters
+
+.small[
+```{r, fig.asp = 0.8, fig.width = 5}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  geom_point(size = 2, colour = "red") + #<<
+  geom_boxplot()
+```
+]]
+
+---
+class: split-50
+# Plots are objects
+
+
+#### Any ggplot can be saved as an object
+
+```{r}
+g <- ggplot(data = penguins, aes(x = sex, y = body_mass_g))
+```
+
+--
+
+.columnl[
+```{r, fig.asp = 0.75, fig.width = 5}
+g
+```
+]
+
+--
+
+.columnr[
+```{r, fig.asp = 0.75, fig.width = 5}
+g + geom_boxplot()
+```
+]
+
+
+
+---
+class: section
+
+# More Geoms
+
+### (Plot types)
+
+---
+# Geoms: Lines
+
+```{r}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm)) +
+  geom_line()  #<<
+```
+
+
+---
+# Geoms: Histogram
+
+```{r}
+ggplot(data = penguins, aes(x = body_mass_g)) +
+  geom_histogram(binwidth = 100) #<<
+```
+
+--
+
+![:label 50%, 18%, 25%](<strong>Note:</strong> We only need 1 aesthetic here (x&rpar;)
+
+---
+# Geoms: Barplots
+
+### Let `ggplot` count your data
+
+```{r, fig.asp = 0.4}
+ggplot(data = penguins, aes(x = species)) +
+  geom_bar()  #<<
+```
+
+---
+# Geoms: Barplots
+
+### **Or**, you can provide the counts .small[(makes more sense when you already/only have counts)]
+
+```{r count, fig.asp = 0.35}
+species_counts <- count(penguins, species)
+
+ggplot(data = species_counts, aes(x = species, y = n)) +
+  geom_bar(stat = "identity") #<<
+```
+
+---
+# Side Note: `tidyverse` functions
+
+### **Or**, you can provide the counts .small[(makes more sense when you already/only have counts)]
+
+```{r, echo = FALSE}
+decorate("species_counts <- count(penguins, species)") %>%
+  flair_rx("penguins", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair_rx("species([^_])", color = "deeppink")
+```
+
+
+### `count()`
+```{r, results = "asis", echo = FALSE}
+glue("- `tidyverse` functions always start with the **data**, followed by other arguments\n",
+     "- you can reference any **column** from '**data**'") %>%
+  flair("data", color = purple) %>%
+  flair("column", color = "deeppink") %>%
+  cat()
+```
+- `count()` the number of observations per unique `column` category
+
+```{r}
+species_counts
+```
+
+
+---
+# Your Turn: Create this plot
+
+```{r yt_boxplot, include = FALSE, fig.asp = 0.4}
+library(ggplot2)
+
+ggplot(data = penguins, aes(x = island, y = bill_depth_mm)) +
+  geom_boxplot(colour = "blue")
+```
+
+```{r, echo = FALSE}
+decorate("yt_boxplot", fig.asp = 0.4) %>%
+  mask("penguins") %>%
+  mask("island") %>%
+  mask("bill_depth_mm") %>%
+  mask("boxplot") %>%
+  mask("colour = \"blue\"")
+```
+
+---
+exclude: `r hide_answers`
+# Your Turn: Create this plot
+
+```{r, echo = FALSE}
+decorate("yt_boxplot")
+```
+
+
+---
+class: section
+# Showing data by group
+
+
+---
+# Mapping aesthetics
+
+```{r, fig.asp = 0.5, out.width = "80%", fig.width = 7.5}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm)) +
+  geom_point()
+```
+
+---
+# Mapping aesthetics
+
+```{r aes, include = FALSE}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = sex)) +
+  geom_point()
+```
+
+```{r, echo = FALSE}
+decorate("aes") %>%
+  flair("colour = sex")
+```
+
+
+---
+# Mapping aesthetics
+
+```{r, echo = FALSE, warning = FALSE, out.width = "100%", fig.asp = 0.48, fig.width = 12}
+g <- ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm)) +
+  theme(legend.position = "top")
+
+g1 <- g + geom_point(aes(colour = sex)) + labs(title = "colour = sex")
+g2 <- g + geom_point(aes(size = year)) + labs(title = "size = year")
+g3 <- g + geom_point(aes(alpha = island)) + labs(title = "alpha = island")
+g4 <- g + geom_point(aes(shape = species)) + labs(title = "shape = species")
+
+gridExtra::grid.arrange(g1, g2, g3, g4)
+```
+
+
+---
+# Mapping aesthetics
+
+### `ggplot` automatically populates the legends (combining where it can)
+
+```{r, fig.asp = 0.4}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = sex, shape = sex)) +
+  geom_point()
+```
+
+---
+# Faceting: `facet_wrap()`
+
+```{r, fig.asp = 0.4}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = sex)) +
+  geom_point() +
+  facet_wrap(~ species) #<<
+```
+
+
+![:box 15%, 25%, 20%](Split plots by <strong>one</strong> grouping variable)
+
+---
+# Faceting: `facet_grid()`
+
+```{r, fig.asp = 0.4}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = sex)) +
+  geom_point() +
+  facet_grid(sex ~ species) #<<
+```
+
+
+![:box 15%, 25%, 20%](Split plots by <strong>two</strong> grouping variables)
+
+
+---
+# Your Turn: Create this plot
+
+```{r yt_facet, include = FALSE, fig.asp = 0.3}
+ggplot(data = penguins, aes(x = sex, y = flipper_length_mm, fill = sex)) + 
+  geom_boxplot() +                                                      
+  facet_wrap(~ species) 
+```
+
+```{r, echo = FALSE}
+decorate("yt_facet") %>%
+  mask("penguins") %>%
+  mask("x = sex, y = flipper_length_mm, fill = sex") %>%
+  mask("geom_boxplot()") %>%
+  mask("facet_wrap(~ species)")
+```
+
+![:spacer 15px]()
+
+> **Hint:** `colour` is for outlining with a colour, `fill` is for 'filling' with a colour
+
+
+---
+exclude: `r hide_answers`
+# Your Turn: Create this plot
+
+```{r, echo = FALSE}
+decorate("yt_facet")
+```
+
+![:spacer 15px]()
+
+> **Hint:** `colour` is for outlining with a colour, `fill` is for 'filling' with a colour
+
+---
+exclude: true
+class: section
+
+# Adding Statistics to Plots
+
+---
+exclude: true
+# Using stats: Summarizing data
+
+### Add data means as points
+```{r, fig.asp = 0.4}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  stat_summary(geom = "point", fun.y = mean) #<<
+```
+
+
+---
+exclude: true
+# Using stats: Summarizing data
+
+### Add error bars, calculated from the data
+```{r, , fig.asp = 0.4}
+ggplot(data = penguins, aes(x = sex, y = body_mass_g)) +
+  stat_summary(geom = "point", fun.y = mean) +
+  stat_summary(geom = "errorbar", width = 0.05, fun.data = mean_se) #<<
+```
+
+---
+class: section
+
+# Trendlines / Regression Lines
+
+---
+# Trendlines / Regression lines
+
+### `geom_line()` is connect-the-dots, not a trend or linear model
+
+```{r, fig.asp = 0.37}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm)) +
+  geom_point() +
+  geom_line()
+```
+
+--
+
+![:box 25%, 25%, 20%](Not what we're looking for)
+
+---
+# Trendlines / Regression lines
+### Let's add a trend line properly
+
+Start with basic plot:
+```{r, fig.asp = 0.35}
+g <- ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm)) +
+  geom_point()
+g
+```
+
+
+---
+class: split-45
+# Trendlines / Regression lines
+
+.columnl[
+### Add the `stat_smooth()`
+- `lm` is for "linear model" (i.e. trendline)
+- grey ribbon = standard error
+]
+
+.columnr[
+```{r, stat_smooth1, include = FALSE}
+g + stat_smooth(method = "lm")
+```
+
+```{r, echo = FALSE, cache = FALSE}
+decorate("stat_smooth1", eval = FALSE) %>%
+  flair("stat_smooth(method = \"lm\")")
+```
+]
+
+![:spacer 55px]()
+
+```{r, ref.label="stat_smooth1", echo = FALSE, eval = TRUE, fig.asp = 0.4, message = FALSE}
+```
+
+
+---
+class: split-45
+# Trendlines / Regression lines
+
+.columnl[
+### Add the `stat_smooth()`
+- remove the grey ribbon `se = FALSE`
+]
+
+.columnr[
+```{r stat_smooth2, fig.asp = 0.75, out.width = "'100%'", include = FALSE}
+g + stat_smooth(method = "lm", se = FALSE)
+```
+
+```{r, echo = FALSE, cache = FALSE}
+decorate("stat_smooth2", eval = FALSE) %>%
+  flair("se = FALSE")
+```
+
+]
+
+![:spacer 55px]()
+
+```{r, ref.label="stat_smooth2", echo = FALSE, eval = TRUE, fig.asp = 0.4, message = FALSE}
+```
+
+
+
+---
+# Trendlines / Regression lines
+
+### A line for each group
+- Specify group (here we use `colour` to specify `sex`)
+
+```{r, fig.asp = 0.33}
+g <- ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = species)) +
+  geom_point()
+g
+```
+
+---
+# Using stats: Trendlines / Regression lines
+
+### A line for each group
+- `stat_smooth()` automatically uses the same grouping
+
+```{r, fig.asp = 0.35, message = FALSE}
+g + stat_smooth(method = "lm", se = FALSE)
+```
+
+---
+# Trendlines / Regression lines
+
+### A line for each group AND overall
+```{r, fig.asp = 0.35, message = FALSE}
+g +  
+  stat_smooth(method = "lm", se = FALSE) + 
+  stat_smooth(method = "lm", se = FALSE, colour = "black")
+```
+
+
+---
+# Your Turn: Create this plot
+
+- A scatter plot
+- Comparing Flipper Length by Body Mass grouped by Species
+- With *a single regression line for the overall trend*
+
+---
+exclude: `r hide_answers`
+
+# Your Turn: Create this plot
+
+- A scatter plot
+- Comparing Flipper Length by Body Mass grouped by Species
+- With *a single regression line for the overall trend*
+
+```{r, message = FALSE, fig.asp = 0.3}
+ggplot(data = penguins, aes(x = body_mass_g, y = flipper_length_mm, colour = species)) + 
+  geom_point() +
+  stat_smooth(se = FALSE, colour = "black", method = "lm")
+```
+
+
+---
+class: section
+
+# Customizing plots
+
+---
+# Customizing: Starting plot
+
+### Let's work with this plot
+
+```{r}
+g <- ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = species)) +
+  geom_point()
+```
+
+```{r, echo = FALSE, fig.asp = 0.4, cache = FALSE}
+g
+```
+
+---
+# Customizing: Labels
+
+```{r, fig.asp = 0.4}
+g + labs(title = "Bill Length vs. Body Mass", 
+         x = "Body Mass (g)", 
+         y = "Bill Length (mm)",
+         colour = "Species", tag = "A")
+```
+
+
+--
+
+![:box 30%, 20%, 40%](<strong>Practice for later</strong><br> Add proper labels to some of your previous plots)
+
+---
+class: split-50
+# Customizing: Built-in themes
+
+.columnl[
+```{r, echo = FALSE, fig.show = "hold", out.width = "95%", fig.width = 5, fig.asp = 0.5}
+g + theme_bw() + labs(title = "g + theme_bw()")
+g + theme_classic() + labs(title = "g + theme_classic()")
+```
+]
+
+.columnr[
+```{r, echo = FALSE, fig.show = "hold", out.width = "95%", fig.width = 5, fig.asp = 0.5}
+g + theme_minimal() + labs(title = "g + theme_minimal()")
+g + theme_dark() + labs(title = "g + theme_dark()")
+```
+]
+
+
+---
+# Customizing: Data range
+
+### Limit the data (exclude data)
+```{r lim_warn, fig.asp = 0.35, warning = FALSE}
+g + xlim(c(4000, 5000))
+```
+
+```{r, ref.label="lim_warn", fig.keep="none", echo = FALSE, warning = TRUE}
+# Print the warning below the plot
+```
+
+
+---
+# Customizing: Axes
+
+`scale_` + (`x` or `y`) + type (`contiuous`, `discrete`, `date`, `datetime`)
+
+- `scale_x_continuous()`
+- `scale_y_discrete()`
+- etc.
+
+### Common arguments
+
+```{r, eval = FALSE}
+g + scale_x_continuous(breaks = seq(0, 20, 10)) # Tick breaks
+g + scale_x_continuous(limits = c(0, 15))       # xlim() is a shortcut for this
+g + scale_x_continuous(expand = c(0, 0))        # Space between axis and data
+```
+
+---
+# Customizing: Axes
+
+```{r, echo = FALSE, fig.asp = 0.6, out.width = "80%", fig.width = 10, warning = FALSE}
+temp <- g + theme(legend.position = "none")
+g1 <- temp + scale_x_continuous(breaks = seq(2500, 6500, 500)) + 
+  labs(title = "g + scale_x_continuous(breaks = seq(2500, 6500, 500))")
+g2 <- temp + scale_x_continuous(limits = c(3000, 4000)) + 
+  labs(title ="g + scale_x_continuous(limits = c(3000, 4000))")  ## xlim() is a shortcut for this
+g3 <- temp + scale_x_continuous(expand = c(0, 0)) + 
+  labs(title = "g + scale_x_continuous(expand = c(0, 0))")
+gridExtra::grid.arrange(g1, g2, g3, nrow = 2)
+```
+
+
+
+
+---
+# Customizing: Aesthetics
+
+### Using scales
+
+`scale_` + aesthetic (`colour`, `fill`, `size`, etc.) + type (`manual`, `continuous`, `datetime`, etc.)
+
+```{r, fig.asp = 0.4}
+g + scale_colour_manual(name = "Type", values = c("green", "purple", "yellow"))
+```
+
+---
+# Customizing: Aesthetics
+
+### Using scales
+
+Or be very explicit:
+
+```{r, fig.asp = 0.35}
+g + scale_colour_manual(name = "Type", 
+                        values = c("Adelie" = "green", "Gentoo" = "purple", "Chinstrap" = "yellow"), 
+                        na.value = "black")
+```
+
+---
+# Customizing: Aesthetics
+
+### For colours, consider colour-blind-friendly scales
+
+```{r, eval = FALSE}
+library(ggthemes)
+g + scale_colour_colorblind(name = "Type")
+g + scale_colour_viridis_d(name = "Type")
+```
+
+```{r, echo = FALSE, fig.asp = 0.3, out.width = "100%", fig.width = 10}
+gridExtra::grid.arrange(g + ggthemes::scale_colour_colorblind(name = "Type"),
+             g + scale_colour_viridis_d(name = "Type"), nrow = 1)
+```
+
+
+---
+# Customizing: Aesthetics
+
+### Forcing
+
+Remove the association between a variable and an aesthetic
+
+```{r forcing, include = FALSE}
+ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, colour = sex)) +
+  geom_point(colour = "green", size = 5) +
+  stat_smooth(method = "lm", se = FALSE, colour = "red")
+```
+
+```{r, echo = FALSE, message = FALSE}
+decorate("forcing", fig.asp = 0.35, message = FALSE) %>%
+  flair("colour = \"green\", size = 5") %>%
+  flair("colour = \"red\"")
+```
+
+
+![:box 15%, 60%, 20%](<strong>Note:</strong> When forcing, aesthetic is not inside <code>aes(&rpar;<code>)
+
+---
+class: split-50
+# Customizing: Legends placement
+
+.columnl[
+### At the: top, bottom, left, right
+```{r, fig.asp = 0.8, fig.width = 5, out.width = "100%"}
+g + theme(legend.position = "top")
+```
+]
+
+.columnr[
+### Exactly here
+```{r, fig.asp = 0.8, fig.width = 5, out.width = "100%"}
+g + theme(legend.position = c(0.15, 0.7))
+```
+]
+
+---
+class: section
+
+# Combining plots with `patchwork`
+
+## Further Reading: <https://patchwork.data-imaginist.com/>
+
+
+---
+# Combining plots with `patchwork`
+
+### Setup
+- Load `patchwork`
+- Create a couple of different plots
+
+```{r}
+library(patchwork)
+
+g1 <- ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm, colour = species)) + 
+  geom_point()
+
+g2 <- ggplot(data = penguins, aes(x = species, y = flipper_length_mm)) + 
+  geom_boxplot()
+
+g3 <- ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g, colour = species)) + 
+  geom_point()
+```
+
+---
+# Combining plots with `patchwork`
+
+### Side-by-Side 2 plots
+```{r, fig.asp = 0.4}
+g1 + g2
+```
+
+---
+# Combining plots with `patchwork`
+
+### More complex arrangements
+```{r, out.width = "50%", fig.asp = 0.8, fig.width = 7}
+g2 / (g1 + g3)
+```
+
+
+---
+# Combining plots with `patchwork`
+
+### "collect" common legends
+
+```{r, out.width = "50%", fig.asp = 0.8, fig.width = 7}
+g2 / (g1 + g3) + plot_layout(guides = "collect")
+```
+
+
+---
+class: split-55
+# Combining plots with `patchwork`
+
+.columnl[
+### Annotate
+.small[
+```{r pw_ann, eval = FALSE}
+g2 / (g1 + g3) + 
+  plot_layout(guides = "collect") +
+  plot_annotation(title = "Penguins Data Summary",          
+                  caption = "Fig 1. Penguins Data Summary", 
+                  tag_levels = "A",                         
+                  tag_suffix = ")")                         
+```
+]]
+
+.columnr[
+```{r, ref.label="pw_ann", echo = FALSE, out.width = "100%", fig.asp = 1, fig.width = 6}
+
+```
+
+]
+
+
+
+
+---
+class: section
+# Saving plots
+
+---
+# Saving plots
+
+## RStudio Export
+**Demo**
+
+--
+
+## `ggsave()`
+
+```{r}
+g <- ggplot(penguins, aes(x = sex, y = bill_length_mm, fill = year)) +
+  geom_boxplot()
+
+ggsave(filename = "penguins_mass.png", plot = g)
+```
+
+---
+# Saving plots
+
+## Publication quality plots
+
+- Many publications require 'lossless' (pdf, svg, eps, ps) or high quality formats (tiff, png)
+- Specific sizes corresponding to columns widths
+- Minimum resolutions
+
+
+```{r, cache = FALSE}
+g <- ggplot(penguins, aes(x = sex, y = body_mass_g)) +
+  geom_boxplot() +
+  labs(x = "Sex", y = "Body Mass (g)") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave(filename = "penguin_mass.pdf", plot = g, dpi = 300,
+       height = 80, width = 129, units = "mm")
+```
+
+---
+class: section
+
+# Loading Data
+
+---
+class: full-width
+# Data types: What kind of data do you have?
+
+## Specific program files
+
+Type             | R Package         | Function (example usage)
+---------------- | ----------------- | -------------
+Excel (.xls, .xlsx)            | `readxl`          | `read_excel("file.xlsx", sheet = 1)`
+Comma separated (.csv) | `readr`          | `read_csv("file.csv")` 
+Tab separated   (e.g, .txt, .dat) | `readr`          | `read_tsv("file.txt")`
+Space separated (e.g, .txt, .dat) | `readr`          | `read_delim("file.dat", delim = " ")`
+Fixed-width     (e.g, .txt, .dat) | `readr`          | `read_fwf("file.dat")`
+
+--
+
+.small[
+> **Notes**  
+> 1. You may be familiar with base functions (i.e. `read.csv()`, `read.table()`)  
+>    These are perfectly acceptable, but `readr` is a bit more powerful and quick
+> 
+> 2. It can be quicker and safer to save Excel files as a *.csv (Comma-separated-variables file)
+>    and then use `readr` package and `read_csv()` function
+> 
+> 3. `readr` is a tidyverse package
+]
+
+---
+# Where is my data?
+
+```{r, error = TRUE, message = FALSE}
+library(tidyverse) # Load tidyverse which includes readr package
+
+my_data <- read_csv("weather.csv")
+```
+
+With no folder (just file name) R expects file to be in **Working directory**
+
+--
+
+## Working directory is:
+- Where your RStudio project is
+- Your home directory (My Documents, etc.) [If not using RStudio Projects]
+- Where you've set it (using `setwd()` or RStudio's Session > Set Working Directory)
+
+--
+
+> Using Projects in RStudio is a great idea
+
+---
+class: full-width
+
+# Where is my data?
+
+## **Absolute** Paths
+
+.medium[
+  OS        | Absolute Path                                      
+----------- | ---------------------------------------------------
+**LINUX**   | /home/steffi/Documents/R Projects/mydata.csv       
+**WINDOWS** | C:/Users/steffi/My Documents/R Projects/mydata.csv
+**MAC**     | /users/steffi/Documents/R Projects/mydata.csv
+]
+
+## **Relative** Paths
+
+.medium[
+Path               | Where to look
+------------------ | --------
+./mydata.csv       | Here (current directory) (./)
+../mydata.csv      | Go up one directory (../)
+./data/mydata.csv  | Stay here (./), go into "data" folder (data/)
+../data/mydata.csv | Go up one directory (../), then into "data" folder (data/)
+]
+
+--
+
+![:box 25%, 50%, 35%](With RStudio 'Projects' only need to use <strong>relative</strong> paths)
+
+
+---
+# Keep yourself organized
+
+- Create an RStudio Project for each Project (e.g. `My Project`)
+- Create a specific `Data` folder within each project (one per project)
+
+Folders look like:
+```
+- My Project
+    - Data
+        - mydata1.csv
+        - mydata2.csv
+    - myscript.R
+    - My Project.Rproj
+```
+
+Now when you load data, you can use something like this: `"Data/mydata1.csv"`
+
+---
+# Checking / Cleaning your data
+
+```{r, include = FALSE}
+library(writexl)
+penguins_raw %>%
+  select(`Sample Number`, Stage, `Date Egg`, `Body Mass (g)`) %>%
+  mutate(` ` = "", `  ` = "") %>%
+  add_case() %>%
+  add_case() %>%
+  write_xlsx(here("./_labs/data.xlsx"))
+
+library(tidyverse)
+library(janitor)
+library(readxl)
+
+my_data <- read_excel(here("_labs/data.xlsx"))
+```
+
+
+```{r, eval = FALSE}
+library(readxl)
+my_data <- read_excel("my_data.xlsx")
+```
+
+```{r}
+head(my_data)
+```
+
+---
+#  Checking / Cleaning your data
+
+```{r}
+tail(my_data)
+```
+
+--
+
+> - Looks like we have some extra, empty, columns... (`..5`, `..6`)
+> - Also looks like some column names might not work well in R
+>   - (Anything with a space or special character, i.e. `Date Egg` and `Body Mass (g)`
+
+
+---
+# Checking / Cleaning your data
+
+- When loading data that was in Excel (etc.) it can often have some funky things going on
+- Use the `janitor` package to quickly fix some of those problems
+
+### Column names
+
+```{r}
+library(janitor)
+
+my_data <- clean_names(my_data)
+head(my_data)
+```
+
+
+---
+# Checking / Cleaning your data
+
+- When loading data that was in Excel (etc.) it can often have some funky things going on
+- Use the `janitor` package to quickly fix some of those problems
+
+### Empty rows/columns
+
+```{r}
+my_data <- remove_empty(my_data, which = c("rows", "cols"))
+```
+
+
+```{r}
+head(my_data)
+```
+
+---
+# Loading your data
+
+![:spacer 40px]()
+
+.center[
+> This blazing fast intro to loading/cleaning will not cover the  <br>
+> many, *many*, **many**, **MANY** ways that data can be weird.
+> 
+> <br>
+> 
+> Let me know if (when) you run into problems and we can trouble shoot together!
+]
+
+
+
+---
+# Your Turn!
+
+## Prep for next class .small[(be ready for class, but you don't have to share with me unless you want to!)]
+
+- Create a **new RStudio Project** for your class project
+- Create a **"Data" folder** inside this project folder
+  - Files pane > New Folder
+- **Add data** to it (if you have data)
+  - Use your computers folder navigator for this
+- **Create a new script** in the main folder
+  - [Menu] File > New > R Script
+- Add code to this script to **load your data into R**
+  - Load the appropriate packages (`tidyverse`, `readxl`, `janitor`)
+  - Use the appropriate function given your data type (e.g., `read_csv()` for .csv, `read_excel` for .xlsx)
+  - Use the appropriate file location (e.g, `"Data/my_data.csv"`)  
+      Remember quotes (" ") around the *entire* file location
+- **Explore your data** - Click on your data in the Environment pane and take a look!
+
+
+---
+class: section
+
+# Wrapping Up!
+
+
+
+---
+# Wrapping up: Common mistakes
+
+### Figures
+- The **package** is `ggplot`**2**, the function is just **`ggplot()`**
+- Did you remember to put the **`+`** at the **end** of the line?
+- Order matters! If you're using custom `theme()`'s, make sure you put these lines **after** bundled themes like `theme_bw()`, or they will be overwritten
+- Variables like 'year' are treated as continuous, but are really categories
+  - Wrap them in `factor()`, i.e. `ggplot(data = penguins, aes(x = factor(year), y = body_mass_g))`
+
+### Loading data
+- Not using RProjects which makes it hard to find your data
+- Expecting your data to be something it's not
+  - (open your data in a text editor or spreadsheet program to take a look)
+- Using the wrong function (i.e you used `read_csv()` when you should have used `read_tsv()`)
+
+
+---
+# Wrapping up: Further reading (all **Free**!)
+- RStudio > Help > Cheatsheets > Data Visualization with `ggplot2`
+- [`ggplot2` book v3](https://ggplot2-book.org)
+  - By Hadley Wickham, Danielle Navarro, and Thomas Lin Pedersen
+- [Cookbook for R](http://www.cookbook-r.com) - by Winston Chang
+  - See also R Graphics Cookbook by Winston Chang
+- [`patchwork` site](https://patchwork.data-imaginist.com/)
+
+- [R for Data Science](https://r4ds.had.co.nz)
+  - [Data Visualization](http://r4ds.had.co.nz/data-visualisation.html)
+  - [Workflow and Projects](https://r4ds.had.co.nz/workflow-projects.html)
+  - [Data Import](https://r4ds.had.co.nz/data-import.html)

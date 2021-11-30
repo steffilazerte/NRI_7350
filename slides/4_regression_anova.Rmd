@@ -1,0 +1,1742 @@
+---
+title: NRI 7350 - Lab 4
+params:
+  hide_answers: FALSE
+output:
+  xaringan::moon_reader:
+    css: [pres_styles.css, global_styles.css]
+    seal: false
+    self-contained: false
+    nature:
+      beforeInit: "macros.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+editor_options: 
+  chunk_output_type: console
+---
+class: title-slide, nobar
+
+```{r setup, include = FALSE}
+
+# For next time
+# - About 40min (good timing!)
+# - DO NOT interpret non-significant results
+
+
+hide_answers <- params$hide_answers
+
+knitr::opts_chunk$set(dpi = 150, fig.width = 8, out.width = "90%",
+                      fig.align = "center", fig.asp = 0.45, cache = FALSE, 
+                      warning = FALSE)
+library(here)
+library(flair)
+library(glue)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(stringr)
+library(palmerpenguins)
+library(magrittr)
+library(patchwork)
+options(width = 100)
+
+purple <- "#440154"
+teal <- "#277F8E"
+
+library(knitr)
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  extra <- options$extra
+  
+  if(is.null(extra)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- hook_output(x, options)
+  if(any(extra == "compact")) x <- paste0("\n.compact[", x, "]")
+  if(any(extra == "small")) x <- paste0("\n.small[", x, "]")
+  if(any(extra == "compact_small")) x <- paste0("\n.compact[.small[", x, "]]")
+  if(any(extra == "compact_extrasmall")) x <- paste0("\n.compact[.extra-small[", x, "]]")
+  if(any(extra == "pause")) x <- paste0("--\n", x)
+  x
+})
+```
+
+
+```{r title-plot-regression, include = FALSE, fig.path = "./R Figs/", fig.asp = 0.6}
+ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  theme_classic() +
+  geom_point() +
+  stat_smooth(method = "lm", se = FALSE) +
+  labs(y = "Body mass (g)", x = "Flipper length (mm)")
+```
+
+![:img right:0, bottom: 0, 65%, , ](./R Figs/title-plot-regression-1.png)
+![:img right: 15%, top: 5%, 30%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/lter_penguins.png)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+## NRI 7350
+# Linear Models
+Regressions,    
+ANOVAs, and   
+Model assumptions
+
+---
+class: section
+
+# Getting started (again)
+
+Open RStudio  
+Open your NRI project  
+Open a **new** script for today:  
+
+File > New File > R Script
+
+<br>
+
+Make sure to load packages at the top:  
+`library(tidyverse)`<br>
+`library(palmerpenguins)`
+
+
+
+---
+# How Are we Doing?
+
+![:img center, bottom: 0, 75%, ,](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/debugging.jpg)
+
+.footnote[Artwork by [@allison_horst](https://github.com/allisonhorst/stats-illustrations)]
+
+---
+class: section
+# Linear Models
+
+---
+# Linear Models
+
+### Running models in R
+```{r, eval = TRUE, echo = FALSE}
+decorate("lm(y ~ x1 + x2, data = data)", eval = FALSE) %>%
+  flair("y", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("x1", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("x2", color = "deeppink", before = "<strong>", after = "</strong>")
+```
+
+
+```{r, echo = FALSE, results = "asis"}
+glue("- **y** is the **response** variable (**dependent**)",
+     "- **x** are the **explanatory** variables (**independent**, **predictor**)\n",
+     "Here we're assuming a **continuous** **y**", .sep = "\n") %>%
+  flair("**y**", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("response", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("**x**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("explanatory", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  cat()
+```
+
+--
+
+### Different types of models
+
+```{r, echo = FALSE, results = "asis"}
+glue("- If we only have one **x** which is continuous, this is a **simple linear regression**",
+     "- If both **x** are continuous, this is a **multiple linear regression**",
+     "- If both **x** are categorical, this is an **ANOVA**", 
+     "- If **x1** is continuous and **x2** is categorical, this is an **ANCOVA**", .sep = "\n") %>%
+  flair("**y**", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("response", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("**x1**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("**x2**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("**x**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("explanatory", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  cat()
+```
+
+
+--
+
+![:box 50%, 85%, 30%](R will figure it out for you)
+
+---
+# Regressions
+
+### Real example
+
+- Is penguin body mass a function of skeletal size?   
+- Can it be predicted by flipper length and bill length?
+
+```{r, echo = FALSE, fig.asp = 0.4, fig.width = 10, message = FALSE}
+g1 <- ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  stat_smooth(method = "lm", )
+g2 <- ggplot(data = penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+g1 + g2
+```
+
+
+---
+# Regressions
+
+### Real example
+```{r lm1, include = FALSE}
+lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = penguins)
+```
+```{r, echo = FALSE}
+decorate("lm1") %>%
+  flair("body_mass_g", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("flipper_length_mm", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("bill_length_mm", color = "deeppink", before = "<strong>", after = "</strong>")
+```
+
+
+.footnote[As we have **two continuous** predictors, this is technically a *multiple* regression]
+
+
+---
+# Regressions
+
+### Real example
+
+```{r, echo = FALSE}
+decorate("lm1", highlight.output = c(7, 8)) %>%
+  flair("body_mass_g", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("flipper_length_mm", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("bill_length_mm", color = "deeppink", before = "<strong>", after = "</strong>")
+```
+
+
+![:box 50%, 70%, 55%](Hmm, not a lot of detail...<br>Only <code>Intercept</code> and Slopes<br> (<code>flipper_length_mm</code> and <code>bill_length_mm</code>&rpar;)
+
+
+.footnote[As we have **two** predictors, this is technically a *multiple* regression]
+
+
+---
+# Regressions
+
+### Assign model to `m` .small[(or any other name you want to give it)]
+```{r, echo = FALSE}
+decorate("m <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = penguins)") %>%
+  flair("body_mass_g", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("flipper_length_mm", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("bill_length_mm", color = "deeppink", before = "<strong>", after = "</strong>")
+```
+
+`m` is a model object
+```{r}
+class(m)
+```
+
+This contains all the information about the model
+
+
+---
+class: split-25
+# Regressions
+
+Use `summary()` to show summary table:
+
+.columnl[
+```{r lm_summary, eval = FALSE}
+summary(m)
+```
+]
+
+.columnr[
+.small[
+```{r, ref.label = "lm_summary", echo = FALSE}
+```
+]
+]
+
+
+![:box 50%, 40%, 50%](<strong>Your turn!</strong><br>Create a model with your response variable by two of your <em>continuous</em> predictors.<br><br>Look at the output of <code>summary(&rpar;</code>)
+
+
+--
+
+![:box 50%, 75%, 40%](<strong>Wait!</strong><br>Shouldn't interpret until we know the model is solid)
+
+
+---
+# Model Diagnostics
+
+### Model Assumptions
+
+- Normality (of residuals)
+- Constant Variance (no heteroscedasticity)
+
+### Other cautions
+
+- Influential observations (Cook's D)
+- Multiple collinearity (with more than one `x` or explanatory variables)
+
+.footnote[There are other assumptions (independence, etc.) but they reflect experimental design, not patterns in the data]
+
+---
+class: split-45
+# Model Diagnostics
+
+First let's get our relevant variables into a diagnostic data frame:
+
+- **`residuals`** (regular and standardized)
+- **`fitted` values**
+- **`cooks` distance**
+- **`obs` number**
+
+.footnote[Remember! `n()` only works *inside* `summarize()`/`mutate()`]
+
+.columnl[.small[
+```{r}
+d <- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d <- mutate(d, obs = 1:n())
+```
+]]
+
+--
+.columnr[
+.small[
+```{r}
+head(d)
+```
+]]
+
+---
+# Side Note: `tidyverse` functions
+
+- From `dplyr` package (part of `tidyverse`)
+
+```{r, echo = FALSE}
+decorate("d <- mutate(d, obs = 1:n())", eval = FALSE) %>%
+  flair("d", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("obs = n()", color = teal, before = "<strong>", after = "</strong>")
+```
+
+### `mutate()`
+```{r, results = "asis", echo = FALSE}
+glue("- `tidyverse` functions always start with the **data**, followed by **other arguments**\n",
+     "- `mutate()` adds **new columns** to your data\n",
+     "- Also note: `1:5` is the same as `c(1,2,3,4,5)`") %>%
+  flair_rx("\\*\\*data\\*\\*", color = purple) %>%
+  flair("other arguments", color = teal) %>%
+  flair("column ", color = "deeppink") %>%
+  flair("new columns", color = teal) %>%
+  cat()
+```
+
+.footnote[Remember! `n()` only works *inside* `summarize()`/`mutate()`]
+
+---
+class: split-50
+# Normality
+
+.columnl[
+### Histogram of residuals
+```{r, fig.asp = 0.7, fig.width = 4}
+ggplot(data = d, aes(x = std_residuals)) +
+  geom_histogram(bins = 20)
+```
+]
+
+.columnr[
+### QQ Normality plot of residuals
+```{r, fig.asp = 0.65, fig.width = 4}
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+]
+
+---
+class: split-45
+# Variance and Influence
+
+.columnl[
+### Check heteroscedasticity
+.small[
+```{r, fig.asp = 0.7, fig.width = 4}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]]
+
+.columnr[
+### Cook's D
+.small[
+```{r, fig.asp = 0.5, fig.width = 5}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 1, linetype = "dotted") + #<<
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+]]
+
+
+---
+class: split-45
+# Variance and Influence
+
+.columnl[
+### Check heteroscedasticity
+.small[
+```{r, fig.asp = 0.7, fig.width = 4}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]]
+
+.columnr[
+### Cook's D
+.small[
+```{r, fig.asp = 0.5, fig.width = 5}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+]]
+
+--
+
+.box-b[Pretty good!]
+
+
+---
+class: split-50
+# What is a 'Good' Normality Plot?
+
+```{r, include = FALSE}
+library(janitor)
+points <- read_csv(here("_labs/uplandpointcounts for quant methods.csv")) %>%
+  clean_names() %>%
+  remove_empty(which = c("rows", "cols"))
+```
+
+### Problematic
+.columnl[
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(I(abundance_all_species^2) ~ litter_depth, data = points)
+ggplot(data = NULL, aes(sample = rstudent(mtest))) +
+  stat_qq() +
+  stat_qq_line()
+```
+]
+
+.columnr[
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(I(log(abundance_all_species)) ~ litter_depth, data = points)
+ggplot(data = NULL, aes(sample = rstudent(mtest))) +
+  stat_qq() +
+  stat_qq_line()
+```
+]
+
+---
+class: split-50
+# What is a 'Good' Normality Plot?
+
+### Good
+.columnl[
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(richness_all_species ~ litter_depth, data = points)
+ggplot(data = NULL, aes(sample = rstudent(mtest))) +
+  stat_qq() +
+  stat_qq_line()
+```
+]
+
+.columnr[
+
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(abundance_songbirds ~ dist_to_road, data = points)
+ggplot(data = NULL, aes(sample = rstudent(mtest))) +
+  stat_qq() +
+  stat_qq_line()
+```
+]
+
+--
+
+![:box 50%, 50%, 40%](No clear cutoff!)
+
+
+---
+class: split-50
+# What is a 'Good' Heteroscedasticity Plot?
+
+## Problematic
+.columnl[
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(I(abundance_all_species^5) ~ litter_depth, data = points)
+ggplot(data = NULL, aes(x = fitted(mtest), y = rstudent(mtest))) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]
+
+.columnr[
+
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(I(abundance_all_species^(1/10)) ~ litter_depth, data = points)
+ggplot(data = NULL, aes(x = fitted(mtest), y = rstudent(mtest))) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]
+
+---
+class: split-50
+# What is a 'Good' Heteroscedasticity Plot?
+
+## Good
+.columnl[
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(log(brainwt) ~ log(bodywt), data = msleep)
+ggplot(data = NULL, aes(x = fitted(mtest), y = rstudent(mtest))) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]
+
+.columnr[
+```{r, echo = FALSE, fig.asp = 0.8, fig.width = 5}
+mtest <- lm(abundance_songbirds ~ dist_to_road, data = points)
+ggplot(data = NULL, aes(x = fitted(mtest), y = rstudent(mtest))) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]
+
+--
+
+![:box 50%, 50%, 40%](No clear cutoff!)
+
+---
+# Multicollinearity (collinearity)
+
+- Only relevant with **more than one explanatory variable**
+- If explanatory variables too correlated, can interfere with model interpretation
+
+--
+
+### Look at our two explanatory variables
+```{r, warning = FALSE, message = FALSE, fig.asp = 0.55, fig.width = 6, out.width = "45%"}
+ggplot(data = penguins, aes(x = flipper_length_mm, y = bill_length_mm)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+```
+
+--
+
+.box-b[Correlated, but not necessarily a problem]
+
+---
+# Multicollinearity (collinearity)
+
+- Only relevant with **more than one explanatory variable**
+- If explanatory variables too correlated, can interfere with model interpretation
+- Correlations between variables *might* be problematic (but not necessarily)
+
+
+### Use `vif()` function from `car` package .small[(vif = variance inflation factor*)]
+```{r, message = FALSE}
+library(car)
+vif(m)
+```
+
+![:spacer 10px]()
+Hmm, that's pretty good (looking for < 10)
+
+
+.footnote[\* Can be interpreted as how much influence the variable has on the model]
+
+---
+layout: true
+class: split-40
+# Interpreting Regressions
+
+```{r}
+m <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = penguins)
+```
+
+
+.columnl[
+```{r lm_summary2, eval = FALSE}
+summary(m)
+```
+]
+
+---
+.columnr[
+.small[
+```{r, ref.label = "lm_summary2", echo = FALSE}
+```
+]
+]
+
+
+---
+.columnr[.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 3:4}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Model
+]
+
+
+
+---
+.columnr[.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 11:14}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Effects
+]
+
+---
+.columnr[.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 19}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Missing observations
+]
+
+
+---
+.columnr[.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 20}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### R<sup>2</sup> and adjusted R<sup>2</sup>
+
+- Adjusted for the number of parameters
+]
+
+
+
+---
+.columnr[
+.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 11:14}
+```
+]
+]
+
+![:spacer 20px]()
+
+.columnl[
+### Specific Details
+
+.medium[
+- `Estimate`
+    - Slope of the effect
+    
+- `Std. Error` 
+    - Variability in the estimates
+    
+- `t value`
+   - Test statistic
+   - Think of it as a holistic combination of estimate and variability
+
+- `Pr(>|t|)` 
+    - **P-value**, significance of the results
+    - Probability of getting `t-value` by chance
+]]
+
+
+
+
+---
+.columnr[
+.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 12}
+```
+]
+]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+**Intercept**
+
+.medium[
+- Significant (P < 2e<sup>-16</sup>\*)
+- Penguins with a flipper length of 0 mm are predicted to have a body mass of `r round(coef(m)[1], 2)`g
+    - Not useful!
+]]
+
+.columnl[
+.footnote[.small[\* 2e<sup>-16</sup> = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+---
+.columnr[
+.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 13}
+```
+]
+]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+Effect of **Flipper Length**
+
+.medium[
+- Significant (P < 2e<sup>-16</sup>*)
+- For each 1 mm increase in flipper length, body mass is predicted to increase by `r round(coef(m)[2], 2)`g
+]]
+
+.columnl[
+.footnote[.small[\* 2e<sup>-16</sup> = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+
+---
+.columnr[.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 14}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+Effect of **Flipper Length**
+
+.medium[
+- Significant (P < 2e<sup>-16</sup>*)
+- For each 1 mm increase in flipper length, body mass is predicted to increase by `r round(coef(m)[2], 2)`g
+]
+
+Effect of **Bill Length**
+
+.medium[
+- Non-significant (P = 0.244, i.e. P < 0.05)
+- Therefore no effect (in this model)  
+  (and no interpretation of estimate)
+]]
+
+
+.columnl[
+.footnote[.small[\* 2e<sup>-16</sup> = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+--
+
+
+![:box 50%, 20%, 70%](<strong>Therefore</strong><br>There is a significant relationship between flipper length and body mass<br>But not between bill length and body mass (when including flipper length&rpar;)
+
+---
+.columnr[.small[
+```{r, ref.label = "lm_summary2", echo = FALSE, highlight.output = 12:14}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Specific Details
+
+![:spacer 15px]()
+
+Effect of **Flipper Length**
+
+.medium[
+- Significant (P < 2e<sup>-16</sup>*)
+- For each 1 mm increase in flipper length, body mass is predicted to increase by `r round(coef(m)[2], 2)`g
+]
+
+Effect of **Bill Length**
+
+.medium[
+- Non-significant (P = 0.244, i.e. P < 0.05)
+- Therefore no effect (and no interpretation of estimate)
+]]
+
+
+.columnl[
+.footnote[.small[\* 2e<sup>-16</sup> = 0.0000000000000002, R uses this as the smallest number]]
+]
+
+
+
+![:box 30%, 40%, 30%](y = mx + b)
+
+--
+
+![:box 30%, 40%, 30%](y = m<sub>1</sub>x<sub>1</sub> + m<sub>2</sub>x<sub>2</sub> + b)
+
+--
+
+![:box 30%, 40%, 30%](y = `r round(coef(m)[2], 2)`x<sub>1</sub> + `r round(coef(m)[3], 2)`x<sub>2</sub> + (`r round(coef(m)[1], 2)`&rpar;)
+
+
+---
+layout: false
+class: split-40
+
+# Extra
+
+### Why no effect of Bill Length?
+
+.columnl[
+![:spacer 35px]()
+```{r, message = FALSE, echo = FALSE, fig.asp = 1, fig.width = 5, out.width = "100%"}
+ggplot(data = penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point() +
+  stat_smooth(method = "lm") 
+```
+]
+
+--
+
+.columnr[
+.small[
+```{r, highlight.output = 12}
+m <- lm(body_mass_g ~ bill_length_mm, data = penguins)
+summary(m)
+```
+]]
+
+---
+class: split-40, space-list
+
+# Extra
+
+### Why no effect of Bill Length?
+
+.columnl[
+
+- Hypothesis of *causation* but really just correlation
+- Flipper length is the 'better' predictor of body mass
+- When flipper length in the model, no extra variation explained by bill length
+- When flipper length *not* in the model, some variation left to be explained
+]
+
+.columnr[
+.small[
+```{r, highlight.output = 12}
+m <- lm(body_mass_g ~ bill_length_mm, data = penguins)
+summary(m)
+```
+]]
+
+
+---
+# Homework (Practice)*
+
+Consider **bill depth** your response and **bill length** your predictor
+
+1. Plot the relationship
+2. Create a linear regression model
+3. Check your model diagnostics
+    - Normality
+    - Heteroscedasticity
+    - Influential variables (i.e. Cook's distance)
+4. Interpret the results of your model
+
+.footnote[\* Not to be handed in, answers posted in these slides next week]
+
+---
+exclude: `r hide_answers`
+
+# Homework (Practice) Answers
+
+1\. Plot the relationship
+
+```{r, message = FALSE, fig.asp = 0.5, out.width = "50%"}
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) + 
+  geom_point() + 
+  stat_smooth(method = "lm")
+```
+
+> Looks like there's definitely a relationship
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+2\. Create a linear regression model
+
+```{r}
+m <- lm(bill_depth_mm ~ bill_length_mm, data = penguins)
+```
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics
+
+```{r}
+d <- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d <- mutate(d, obs = 1:n())
+d
+```
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Normality
+
+```{r, fig.asp = 0.7, out.width = "50%"}
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+![:box 25%, 75%, 30%](Not bad, could be better, but good enough)
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Heteroscedasticity
+
+```{r, fig.asp = 0.7, out.width = "50%"}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+
+![:box 25%, 75%, 30%](Again, not bad, could be better)
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Influence (Cook's d)
+
+```{r, fig.asp = 0.6, out.width = "50%"}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+![:box 15%, 75%, 25%](Some interesting observations, but nothing crazy)
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+4\. Interpret the results of your model
+
+.small[
+```{r, highlight.output = 12}
+summary(m)
+```
+]
+
+![:box 25%, 50%, 40%](Significant (p < 0.0001&rpar; relationship between bill length and bill depth. For every 1 mm increase in bill length, bill depth decreases by 0.085 mm<br><br>Is this biologically meaningfull?)
+
+
+---
+class: section
+layout: false
+
+# ANOVAs
+
+---
+# Linear Models
+
+### Running models in R
+```{r, eval = TRUE, echo = FALSE}
+decorate("lm(y ~ x1 + x2, data = data)", eval = FALSE) %>%
+  flair("y", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("x1", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("x2", color = "deeppink", before = "<strong>", after = "</strong>")
+```
+
+
+```{r, echo = FALSE, results = "asis"}
+glue("- **y** is the **response** variable (**dependent**)",
+     "- **x** are the **explanatory** variables (**independent**, **predictor**)\n",
+     "Here we're assuming a **continuous** **y**", .sep = "\n") %>%
+  flair("**y**", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("response", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("**x**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("explanatory", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  cat()
+```
+
+--
+
+### Different types of models
+
+```{r, echo = FALSE, results = "asis"}
+glue("- If we only have one **x** which is continuous, this is a **simple linear regression**",
+     "- If both **x** are continuous, this is a **multiple linear regression**",
+     "- If both **x** are categorical, this is an **ANOVA**", 
+     "- If **x1** is continuous and **x2** is categorical, this is an **ANCOVA**", .sep = "\n") %>%
+  flair("**y**", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("response", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("**x**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("**x1**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("**x2**", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("explanatory", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  cat()
+```
+
+
+--
+
+![:box 50%, 85%, 30%](R will figure it out for you)
+
+
+---
+# ANOVAs
+
+### Real example
+
+- Are male penguins larger than female penguins? 
+- Are different species different sizes?
+- Can body mass be predicted by species and sex?
+
+```{r, echo = FALSE, fig.asp = 0.38, fig.width = 9, message = FALSE}
+g1 <- ggplot(data = drop_na(penguins), aes(x = species, y = body_mass_g)) +
+  geom_boxplot()
+g2 <- ggplot(data = drop_na(penguins), aes(x = sex, y = body_mass_g)) +
+  geom_boxplot()
+g1 + g2
+```
+
+
+
+---
+# ANOVAs
+
+### Real example
+```{r anova1, include = FALSE}
+m <- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+```{r, echo = FALSE}
+decorate("anova1") %>%
+  flair("body_mass_g", color = purple, before = "<strong>", after = "</strong>") %>%
+  flair("species", color = "deeppink", before = "<strong>", after = "</strong>") %>%
+  flair("sex", color = "deeppink", before = "<strong>", after = "</strong>")
+```
+
+
+As we have two **categorical** predictors, this is an ANOVA
+
+
+![:box 50%, 45%, 50%](<strong>Your turn!</strong><br>Create a model with your response variable by your <em>one</em> <em>categorical</em> predictor.<br><br>Look at the output of <code>summary(&rpar;</code> <em>and</em> <code>anova(&rpar;</code>)
+
+--
+
+![:box 50%, 75%, 40%](<strong>Wait!</strong><br>Shouldn't interpret until we know the model is solid)
+
+---
+class: split-45
+# Model Diagnostics
+
+Same as before! Let's get our relevant variables into a diagnostic data frame:
+
+- **`residuals`** (regular and standardized)
+- **`fitted` values**
+- **`cooks` distance**
+- **`obs` number**
+
+.footnote[Remember! `n()` only works *inside* `summarize()`/`mutate()`]
+
+.columnl[.small[
+```{r}
+d <- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d <- mutate(d, obs = 1:n())
+```
+]]
+
+--
+.columnr[
+.small[
+```{r}
+head(d)
+```
+]]
+
+---
+class: split-50
+# Normality
+
+.columnl[
+#### Histogram of residuals
+.small[
+```{r, fig.asp = 0.7, fig.width = 4}
+ggplot(data = d, aes(x = std_residuals)) +
+  geom_histogram(bins = 20)
+```
+]]
+
+.columnr[
+#### QQ Normality plot of residuals
+.small[
+```{r, fig.asp = 0.65, fig.width = 4}
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+]]
+
+---
+class: split-50
+# Variance and Influence
+
+.columnl[
+#### Check heteroscedasticity
+.small[
+```{r, fig.asp = 0.7, fig.width = 4}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]]
+
+.columnr[
+#### Cook's D
+
+.small[
+```{r, fig.asp = 0.50, fig.width = 5}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 1, linetype = "dotted") + #<<
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+
+```
+]]
+
+---
+class: split-50
+# Variance and Influence
+
+.columnl[
+#### Check heteroscedasticity
+.small[
+```{r, fig.asp = 0.7, fig.width = 4}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+]]
+
+.columnr[
+#### Cook's D
+
+.small[
+```{r, fig.asp = 0.50, fig.width = 5}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+
+```
+]]
+
+
+--
+![:box 50%, 80%, 20%](Overall not too bad)
+
+---
+# Multicollinearity (collinearity)
+
+### `vif()` function from `car` package
+```{r, message = FALSE}
+library(car)
+vif(m)
+```
+
+Here we consider the `GVIF^(1/2*Df))` value*
+
+Looks good!
+
+.footnote[\* See `?vif` and the reference therein: Fox, J. and Monette, G. (1992) Generalized collinearity diagnostics. JASA, 87, 178–183.]
+
+---
+layout: true
+class: split-40
+# Interpreting ANOVA Summaries
+
+
+```{r}
+m <- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.columnl[
+```{r anova_summary1, eval = FALSE}
+summary(m)
+```
+]
+
+---
+.columnr[.small[
+```{r, ref.label = "anova_summary1", echo = FALSE}
+```
+]]
+
+
+---
+.columnr[.small[
+```{r, ref.label = "anova_summary1", echo = FALSE, highlight.output = 3}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Model
+]
+
+
+---
+.columnr[.small[
+```{r, ref.label = "anova_summary1", echo = FALSE, highlight.output = 11:14}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Effects
+]
+
+---
+.columnr[.small[
+```{r, ref.label = "anova_summary1", echo = FALSE, highlight.output = 19}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### Missing observations
+]
+
+
+---
+.columnr[.small[
+```{r, ref.label = "anova_summary1", echo = FALSE, highlight.output = 20}
+```
+]]
+
+![:spacer 20px]()
+.columnl[
+### R<sup>2</sup> and adjusted R<sup>2</sup>
+
+- Adjusted for the number of parameters
+]
+
+
+
+---
+.columnr[.small[
+```{r, ref.label = "anova_summary1", echo = FALSE, highlight.output = 11:14}
+```
+]]
+
+![:spacer 20px]()
+
+.columnl[
+### Specific Details
+
+.medium[
+- `Estimate`
+    - Treatment contrasts
+    - Average *differences* among categories compared to the base category
+    
+- `Std. Error` 
+    - Variability in the estimates
+    
+- `t value`
+   - Test statistic
+
+- `Pr(>|t|)` 
+    - **P-value**, significance of the *differences*
+    - Probability of getting `t-value` by chance
+]]
+
+--
+
+![:box 50%, 50%, 60%](Easier to interpret estimates if we consider a simpler model)
+
+---
+layout: false
+class: split-40, space-list
+
+# Interpreting ANOVA Summaries
+
+```{r}
+m <- lm(body_mass_g ~ species, data = penguins)
+```
+
+.columnl[
+```{r anova_summary2, eval = FALSE}
+summary(m)
+```
+]
+
+.columnr[.small[
+```{r, ref.label = "anova_summary2", echo = FALSE, highlight.output = 11:13}
+```
+]]
+
+--
+
+.columnl[
+Effect of **Species**
+.medium[
+- `(Intercept)` represents base category (i.e. Adelie penguins)
+- Adelie have mean body mass of `r round(coef(m)[1], 2)` g 
+- On average, Chinstrap penguins are `r round(coef(m)[2], 2)` g heavier than Adelie penguins
+- On average, Gentoo penguins are `r round(coef(m)[3], 2)` g heavier than Adelie penguins
+]]
+
+![:img right: 10%, top: 0%, 30%, ,](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/lter_penguins.png)
+
+--
+
+![:box 50%, 50%, 30%](Back to original model)
+
+
+---
+class: split-40, space-list
+# Interpreting ANOVA Summaries
+
+
+```{r}
+m <- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.columnl[
+```{r anova_summary3, eval = FALSE}
+summary(m)
+```
+]
+
+.columnr[.small[
+```{r, ref.label = "anova_summary3", echo = FALSE, highlight.output = 11:14}
+```
+]]
+
+.columnl[
+Effect of **Species** and **Sex**
+
+.medium[
+- `(Intercept)` represents base category but is a combination of factors
+- Much more complicated to interpret
+- Comparisons are often not of interest anyway (unless you've set up contrasts, which are advanced stats but awesome!)
+]]
+
+--
+
+![:box 80%, 80%, 25%](So let's look at ANOVA tables instead)
+
+---
+class: split-50
+layout: true
+# Interpreting ANOVA Tables
+
+### Type I
+
+```{r}
+m <- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.columnl[
+```{r anova, eval = FALSE}
+anova(m)
+```
+]
+
+---
+.columnr[.small[
+```{r, ref.label = "anova", echo = FALSE}
+```
+]]
+
+---
+.columnr[.small[
+```{r, ref.label = "anova", echo = FALSE, highlight.output = 5:6}
+```
+]]
+
+.columnl[
+Overall effects of **Species** and **Sex**
+
+.medium[
+- Yes there are differences among **Species** (P < 2.2e<sup>-16</sup>)
+- Yes there are differences between **Sexes** (P < 2.2e<sup>-16</sup>)
+]]
+
+--
+
+![:box 75%, 75%, 45%](Not a whole lot of information... <br>Stay tuned for <strong>Post-Hoc</strong> tests next week!)
+
+---
+class: split-50, space-list
+layout: false
+# Interpreting ANOVA Tables
+
+### Type I
+
+.columnl[
+.small[
+```{r, highlight.output = 5:6}
+m1 <- lm(body_mass_g ~ species + sex, data = penguins) #<<
+anova(m1)
+```
+]]
+
+.columnr[
+.small[
+```{r, highlight.output = 5:6}
+m2 <- lm(body_mass_g ~ sex + species, data = penguins)#<<
+anova(m2)
+```
+]]
+
+- For Type I ANOVAs, order matters with unbalanced samples
+    - See that `Sum sq`, `Mean Sq` and `F value` all differ between the models
+- Here, pretty minor, but important to remember with greater unbalances
+
+---
+layout: true
+class: split-50
+
+# Interpreting ANOVA Tables
+
+### Type III
+
+```{r}
+m <- lm(body_mass_g ~ species + sex, data = penguins)
+```
+
+.footnote[Type II ANOVAs do exist as well, but generally we use Type III in natural sciences]
+
+.columnl[
+```{r anova3, eval = FALSE}
+library(car)
+Anova(m, type = "3")
+```
+]
+
+---
+.columnr[.small[
+```{r, ref.label = "anova3", echo = FALSE}
+```
+]]
+
+
+---
+layout: false
+class: split-50
+
+# Interpreting ANOVA Tables
+
+### Type III
+
+.columnl[
+.small[
+```{r, highlight.output = 6:7}
+m1 <- lm(body_mass_g ~ species + sex, data = penguins) #<<
+Anova(m1, type = "3")
+```
+]]
+
+.columnr[
+.small[
+```{r, highlight.output = 6:7}
+m2 <- lm(body_mass_g ~ sex + species, data = penguins)#<<
+Anova(m2, type = "3")
+```
+]]
+
+- Type III and unbalanced samples: Not dependent on variable order
+
+---
+# Homework (Practice)*
+
+Consider flipper length your response variable and species and sex your predictor variables
+
+1. Plot the relationship between flipper length and species and between flipper length and sex
+
+2. Create an ANOVA model of flipper length and species
+
+3. Check diagnostics
+
+4. Interpret the **summary table** 
+
+5. Interpret the **ANOVA Table**
+
+6. Create an ANOVA model of flipper length and species and sex
+
+7. Check diagnostics
+
+8. Interpret the **ANOVA Table**
+
+.footnote[\* Not to be handed in, answers posted in these slides next week]
+
+---
+exclude: `r hide_answers`
+class: split-50
+# Homework (Practice) Answers
+
+1\. Plot the relationship between flipper length and species and between flipper length and sex
+
+
+.footnote[Use `drop_na()` to omit missing `sex`]
+
+.columnl[
+.small[
+```{r, fig.width = 6, fig.asp = 0.7}
+ggplot(data = penguins, 
+       aes(x = species, y = flipper_length_mm)) +
+  geom_boxplot()
+```
+]]
+
+.columnr[
+.small[
+```{r, fig.width = 6, fig.asp = 0.7}
+ggplot(data = drop_na(penguins), 
+       aes(x = sex, y = flipper_length_mm)) +
+  geom_boxplot()
+```
+]]
+
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+2\. Create an ANOVA model of flipper length and species
+
+```{r}
+m <- lm(flipper_length_mm ~ species, data = penguins)
+```
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics
+
+```{r}
+d <- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d <- mutate(d, obs = 1:n())
+d
+```
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Normality
+
+```{r, fig.asp = 0.7, out.width = "50%"}
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+![:box 25%, 75%, 30%](Great)
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Heteroscedasticity
+
+```{r, fig.asp = 0.7, out.width = "50%"}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+
+![:box 25%, 75%, 30%](Not bad)
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+3\. Check your model diagnostics - Influence (Cook's d)
+
+```{r, fig.asp = 0.6, out.width = "50%"}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+![:box 15%, 75%, 25%](Some interesting observations, but nothing crazy)
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+4\. Interpret the **summary table** 
+
+.small[
+```{r, highlight.output = 11:13}
+summary(m)
+```
+]
+
+![:box 25%, 20%, 40%](Adelie penguins have an average flipper length of 189.95mm)
+
+![:box 25%, 40%, 40%](Chinstrap flippers are on average 5.87mm longer than Adelie penguins (P < 0.0001&rpar;)
+
+![:box 25%, 60%, 40%](Gentoo flippers are on average 27.23mm longer than Adelie penguins (P < 0.0001&rpar;)
+
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+5\. Interpret the **ANOVA Table**
+
+.small[
+```{r, highlight.output = 5}
+anova(m)
+```
+]
+
+![:box 50%, 75%, 60%](Flipper length differs significantly (P < 0.0001&rpar; among species<br><span class = "medium">But we don't know exactly how</span>)
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+6\. Create an ANOVA model of flipper length and species and sex
+
+```{r}
+m <- lm(flipper_length_mm ~ species + sex, data = penguins)
+```
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics
+
+```{r}
+d <- data.frame(residuals = residuals(m),    
+                std_residuals = rstudent(m), 
+                fitted = fitted(m),          
+                cooks = cooks.distance(m))   
+
+d <- mutate(d, obs = 1:n())
+d
+```
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics - Normality
+
+```{r, fig.asp = 0.7, out.width = "50%"}
+ggplot(data = d, aes(sample = std_residuals)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+![:box 25%, 75%, 30%](No problem)
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics - Heteroscedasticity
+
+```{r, fig.asp = 0.7, out.width = "50%"}
+ggplot(d, aes(x = fitted, y = std_residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+```
+
+
+![:box 25%, 25%, 30%](Not bad, perhaps a smidge of funnelling but I wouldn't worry about it)
+
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+7\. Check your model diagnostics - Influence (Cook's d)
+
+```{r, fig.asp = 0.6, out.width = "50%"}
+ggplot(d, aes(x = obs, y = cooks)) +
+  geom_point() +
+  geom_hline(yintercept = 4/nrow(penguins), 
+             linetype = "dashed")
+```
+
+![:box 15%, 75%, 25%](Some interesting observations, but nothing crazy)
+
+---
+exclude: `r hide_answers`
+# Homework (Practice) Answers
+
+8\. Interpret the **ANOVA Table**
+
+.small[
+```{r, highlight.output = 5:6}
+anova(m)
+```
+]
+
+![:box 50%, 75%, 90%](Flipper length differs significantly among species (P < 0.0001&rpar; and between sexes (P < 0.0001&rpar;<br><span class = "medium">We don't know exactly how they differ among species,<br>but looking at our boxplots, we know that male penguins have longer flippers than female penguins</span>)

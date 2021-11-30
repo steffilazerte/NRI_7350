@@ -37,6 +37,10 @@ labs <- tribble(
   "6_glm_non_parametric.Rmd", "6 GLMs and Non-parametric stats",     TRUE) %>%
   mutate(f = file.path("./_labs", f),
          nice = file.path(nice))
+
+
+# Copy over Rmd files
+file.copy(labs$f, f)
 ```
 
 ```{r getdata, include = FALSE, cache = FALSE}
